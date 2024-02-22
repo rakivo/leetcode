@@ -1,0 +1,11 @@
+c/main
+cpp/a.out
+rs/target
+rs/Cargo.lock
+rs/main
+rs2/target
+rs2/Cargo.lock
+rs3/target
+rs3/Cargo.lock
+rs4/target
+rs4/Cargo.lock

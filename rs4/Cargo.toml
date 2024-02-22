@@ -1,0 +1,10 @@
+[package]
+name = "rs4"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[[bin]]
+name = "main"
+path = "./main.rs"
