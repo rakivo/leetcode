@@ -30,4 +30,14 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
 
 // <=======================================================================>
 
-fn main() {}
+fn meeting_rooms(mut times: Vec<Vec<u32>>) -> bool {
+    times.sort_by(|i1, i2| i1[0].cmp(&i2[0]));
+    times.windows(2).all(|vec| vec[0][1] <= vec[1][0])
+}
+
+fn main() {
+    let times1: Vec<Vec<u32>> = vec![vec![0, 30], vec![5, 10], vec![15, 20]];
+    let times2: Vec<Vec<u32>> = vec![vec![7, 30], vec![2, 4]];
+    assert!(!meeting_rooms(times1));
+    assert!(meeting_rooms(times2));
+}
