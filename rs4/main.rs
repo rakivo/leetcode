@@ -29,7 +29,8 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
 }
 
 // <=======================================================================>
-
+//
+// only because of that problem is for "LeetCode subscribers" and closed for other people
 fn meeting_rooms(mut times: Vec<Vec<u32>>) -> bool {
     times.sort_by(|i1, i2| i1[0].cmp(&i2[0]));
     times.windows(2).all(|vec| vec[0][1] <= vec[1][0])
