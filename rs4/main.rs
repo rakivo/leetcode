@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     //                               l        r       u        d
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
@@ -31,14 +33,28 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
 // <=======================================================================>
 //
 // only because of that problem is for "LeetCode subscribers" and closed for other people
+#[allow(unused)]
 fn meeting_rooms(mut times: Vec<Vec<u32>>) -> bool {
     times.sort_by(|i1, i2| i1[0].cmp(&i2[0]));
     times.windows(2).all(|vec| vec[0][1] <= vec[1][0])
 }
 
+pub fn count_prefix_suffix_pairs(words: Vec<String>) -> i64 {
+    words.iter().fold((0, HashMap::<&str, i64>::new()), |(mut acc, mut map), w| {
+        map.iter().for_each(|(k, v)| {
+            if k.len() <= w.len()
+            && w.starts_with(k)
+            && w.ends_with(k) {
+                acc += v; 
+            }
+        });
+        *map.entry(&w).or_insert(0) += 1;
+        (acc, map)
+    }).0
+}
+
+// <=======================================================================>
+//
 fn main() {
-    let times1: Vec<Vec<u32>> = vec![vec![0, 30], vec![5, 10], vec![15, 20]];
-    let times2: Vec<Vec<u32>> = vec![vec![7, 30], vec![2, 4]];
-    assert!(!meeting_rooms(times1));
-    assert!(meeting_rooms(times2));
+    dbg!(count_prefix_suffix_pairs(vec!["pa".to_owned(),"papa".to_owned(),"ma".to_owned(),"mama".to_owned()]));
 }
