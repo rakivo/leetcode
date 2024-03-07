@@ -8,4 +8,5 @@ rs2/Cargo.lock
 rs3/target
 rs3/Cargo.lock
 rs4/target
+rs4/movements.rs
 rs4/Cargo.lock

@@ -171,8 +171,6 @@ int** permute(int* nums, int n, int* ret_size, int** ret_col_size) {
     return result;
 }
 
-// <=======================================================================>
-
 int main()
 {
     return 0;
