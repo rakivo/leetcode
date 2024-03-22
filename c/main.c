@@ -19,10 +19,8 @@ int** levelOrderBottom(struct TreeNode* root, int* returnSize, int** returnColum
     int *c = *returnColumnSizes = malloc(sizeof(int [sz])), i = sz - 1, k;
 
     for (int f = 0, b = 1, *p, lb, j; root && f < b ; i--)
-
         for (p = a[i] = malloc(sizeof(int [c[i] = b - f])),
                 lb = b, j = 0; f < lb; p[j++] = n[f++]->val)
-
             (n[b++] = n[f]->left) || b--, (n[b++] = n[f]->right) || b--;
 
 
@@ -171,7 +169,26 @@ int** permute(int* nums, int n, int* ret_size, int** ret_col_size) {
     return result;
 }
 
-int main()
-{
-    return 0;
+void traverse(int* max, struct TreeNode* root) {
+    if (!root) {
+        return;
+    }
+    int r = 0, l = 0;
+    if (root->right) {
+        r = abs(*max - root->right->val);
+    } if (root->left) {
+        l = abs(*max - root->left->val);
+    }
+    *max = r > *max ? r : *max;
+    *max = l > *max ? l : *max;
+    traverse(max, root->right);
+    traverse(max, root->left);
 }
+
+int maxAncestorDiff(struct TreeNode* root) {
+    int ret = 0;
+    traverse(&ret, root);
+    return ret;
+}
+
+int main = 0;

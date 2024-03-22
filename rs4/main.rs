@@ -1,5 +1,5 @@
-pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     //                               l        r       u        d
+pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     fn dfs(i: i32, j: i32, grid: &mut Vec<Vec<char>>, n: &i32, n0: &i32) -> bool {
         if i < 0
@@ -174,8 +174,6 @@ fn solution(arr: &[u64]) -> u128 {
 
 // <=======================================================================>
 
-use std::collections::HashMap;
-
 struct FT {
     tree:  Vec<usize>,
     treen: i32
@@ -281,13 +279,105 @@ pub fn beautiful_substrings(s: String, k: i32) -> i32 {
     } t
 }
 
+pub fn sum_of_encrypted_int(n: Vec<i32>) -> i32 {
+    n
+    .iter()
+    .map(|&x| {
+        let mut len = 0;
+        let mut max = 0;
+        let mut y   = x;
+        while y > 0 {
+            max = std::cmp::max(y % 10, max);
+            y /= 10;
+            len += 1;
+        }
+        max * (10i32.pow(len) - 1) / 9
+    })
+    .sum()
+}
+
+pub fn is_substring_present(s: String) -> bool {
+    let x = s.chars().rev().collect::<String>();
+    for i in 0..s.len() - 1 {
+        if x.contains(&s[i..i + 2]) {
+            return true;
+        }
+    } false
+}
+
+pub fn is_substring_present1(s: String) -> bool {
+    (0..s.len() - 1).any(|i| s.chars().rev().collect::<String>().contains(&s[i..i + 2]))
+}
+
+pub fn find_minimum_operations(s1: String, s2: String, s3: String) -> i32 {
+    let (x, y, z) = (s1.len(), s2.len(), s3.len());
+    let (mut i, m) = (0, x.min(y).min(z));
+
+    while i < m
+    && &s1[i..=i] == &s2[i..=i]
+    && &s2[i..=i] == &s3[i..=i] {
+        i += 1
+    }
+
+    match i {
+        0 => -1,
+        _ => (x + y + z - 3 * i) as i32
+    }
+}
+
+pub fn count_substrings(s: String, c: char) -> i64 {
+    let m = s.chars().filter(|&ch| ch == c).count() as i64;
+    m * (m + 1) / 2
+}
+
+pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
+    arra.sort_unstable();
+    let m = arra.windows(2).map(|p| p[1] - p[0]).min().unwrap();
+    arra.windows(2)
+        .filter_map(|p| if p[1] - p[0] == m {
+            Some(vec![p[0], p[1]])
+        } else {
+            None
+        }).collect::<Vec<_>>()
+}
+
+pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
+    nums.sort_unstable();
+    nums.iter().rev().filter_map(|i| {
+         if nums.binary_search(&-i).is_ok() {
+            Some(*i)
+        } else { 
+            None 
+        }
+    }).max().unwrap_or(-1)
+}
+
+use std::collections::HashMap;
+
+pub fn search(nums: Vec<i32>, tar: i32) -> i32 {
+    let at = nums.partition_point(|&x| x >= nums[0]);
+    if tar < nums[0] {
+        if let Some(idx) = nums[at..].binary_search(&tar).ok() {
+            return (idx + at) as i32;
+        }
+    } else {
+        if let Some(idx) = nums[..at].binary_search(&tar).ok() {
+            return idx as i32;
+        }
+    } -1
+}
+
 #[allow(unused)]
 macro_rules! tovstr {
-    ($($str:expr), *) => {
+    ($($str: expr), *) => {
         vec![$($str.to_owned()), *]
     };
 }
 
 fn main() {
-    dbg!(beautiful_substrings("baeyh".to_owned(), 2));
+    dbg!(minimum_abs_difference(vec![4, 2, 1, 3]));
+    dbg!(count_substrings("abada".to_owned(), 'a'));
+    dbg!(find_minimum_operations("abc".to_owned(), "abb".to_owned(), "ab".to_owned()));
+    dbg!(is_substring_present1("abcd".to_owned()));
+    dbg!(sum_of_encrypted_int(vec![10, 21, 31]));
 }

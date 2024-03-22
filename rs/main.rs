@@ -69,4 +69,4 @@ pub fn modified_matrix(mut mat: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
     } mat
 }
 
-fn main() { }
+fn main() {}
