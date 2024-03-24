@@ -23,7 +23,7 @@ public:
 
         auto maxt = std::max_element(nums.begin(), nums.end());
         int  maxi = std::distance(nums.begin(), maxt);
-
+    
         TreeNode* root = new TreeNode(*maxt);
 
         std::vector<int> l(nums.begin(), maxt);

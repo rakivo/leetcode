@@ -248,6 +248,8 @@ pub fn result_array(nums: Vec<i32>) -> Vec<i32> {
     arr1
 }
 
+// <=======================================================================>
+
 pub fn beautiful_substrings(s: String, k: i32) -> i32 {
     let n = s.len();
     let mut dp = vec![(0, 0); n];
@@ -279,6 +281,8 @@ pub fn beautiful_substrings(s: String, k: i32) -> i32 {
     } t
 }
 
+// <=======================================================================>
+
 pub fn sum_of_encrypted_int(n: Vec<i32>) -> i32 {
     n
     .iter()
@@ -296,6 +300,8 @@ pub fn sum_of_encrypted_int(n: Vec<i32>) -> i32 {
     .sum()
 }
 
+// <=======================================================================>
+
 pub fn is_substring_present(s: String) -> bool {
     let x = s.chars().rev().collect::<String>();
     for i in 0..s.len() - 1 {
@@ -305,9 +311,13 @@ pub fn is_substring_present(s: String) -> bool {
     } false
 }
 
+// <=======================================================================>
+
 pub fn is_substring_present1(s: String) -> bool {
     (0..s.len() - 1).any(|i| s.chars().rev().collect::<String>().contains(&s[i..i + 2]))
 }
+
+// <=======================================================================>
 
 pub fn find_minimum_operations(s1: String, s2: String, s3: String) -> i32 {
     let (x, y, z) = (s1.len(), s2.len(), s3.len());
@@ -325,10 +335,14 @@ pub fn find_minimum_operations(s1: String, s2: String, s3: String) -> i32 {
     }
 }
 
+// <=======================================================================>
+
 pub fn count_substrings(s: String, c: char) -> i64 {
     let m = s.chars().filter(|&ch| ch == c).count() as i64;
     m * (m + 1) / 2
 }
+
+// <=======================================================================>
 
 pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
     arra.sort_unstable();
@@ -341,6 +355,8 @@ pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
         }).collect::<Vec<_>>()
 }
 
+// <=======================================================================>
+
 pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
     nums.sort_unstable();
     nums.iter().rev().filter_map(|i| {
@@ -352,7 +368,7 @@ pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
     }).max().unwrap_or(-1)
 }
 
-use std::collections::HashMap;
+// <=======================================================================>
 
 pub fn search(nums: Vec<i32>, tar: i32) -> i32 {
     let at = nums.partition_point(|&x| x >= nums[0]);
@@ -367,6 +383,66 @@ pub fn search(nums: Vec<i32>, tar: i32) -> i32 {
     } -1
 }
 
+// <=======================================================================>
+
+use std::collections::HashMap;
+
+pub fn minimum_deletions(word: String, k: i32) -> i32 {
+    let mut map = [0; 26];
+    let mut ans = i32::MAX;
+
+    for c in word.chars() {
+        map[c as usize - 97] += 1;
+    }
+    
+    for &x in map.iter() {
+        let high = x + k;
+        ans = ans.min
+        (
+            map.iter().map(|&y| {
+                if y > high   { y - high }
+                else if y < x { y }
+                else          { 0 }
+            }).sum()
+        );
+    } ans
+}
+
+// <=======================================================================>
+
+pub fn game_of_life(a: &mut Vec<Vec<i32>>) {
+    let n = a.len();
+    let m = a[0].len();
+
+    for i in 0..n {
+        for j in 0..m {
+            let mut live_cnt = 0;
+            for di in [!0, 0, 1] {
+                for dj in [!0, 0, 1] {
+                    if di == 0 && dj == 0 {
+                        continue;
+                    }
+                    if i.wrapping_add(di) >= n || j.wrapping_add(dj) >= m {
+                        continue;
+                    }
+                    live_cnt += a[i + di][j + dj] & 1;
+                }
+            }
+            if a[i][j] % 2 == 1 && (live_cnt == 2 || live_cnt == 3) {
+                a[i][j] |= 1 << 1;
+            }
+            if a[i][j] % 2 == 0 && live_cnt == 3 {
+                a[i][j] |= 1 << 1;
+            }
+        }
+    }
+    for i in 0..n {
+        for j in 0..m {
+            a[i][j] >>= 1;
+        }
+    }
+}
+
 #[allow(unused)]
 macro_rules! tovstr {
     ($($str: expr), *) => {
@@ -375,6 +451,7 @@ macro_rules! tovstr {
 }
 
 fn main() {
+    dbg!(minimum_deletions("aabcaba".to_owned(), 0));
     dbg!(minimum_abs_difference(vec![4, 2, 1, 3]));
     dbg!(count_substrings("abada".to_owned(), 'a'));
     dbg!(find_minimum_operations("abc".to_owned(), "abb".to_owned(), "ab".to_owned()));
