@@ -533,6 +533,7 @@ pub fn sum_of_encrypted_int(n: Vec<i32>) -> i32 {
 
 // <=======================================================================>
 
+// ...
 pub fn is_substring_present(s: String) -> bool {
     let x = s.chars().rev().collect::<String>();
     for i in 0..s.len() - 1 {
@@ -544,12 +545,14 @@ pub fn is_substring_present(s: String) -> bool {
 
 // <=======================================================================>
 
+// mine (not posted)
 pub fn is_substring_present1(s: String) -> bool {
     (0..s.len() - 1).any(|i| s.chars().rev().collect::<String>().contains(&s[i..i + 2]))
 }
 
 // <=======================================================================>
 
+// author: https://leetcode.com/problems/minimum-deletions-to-make-string-k-special/solutions/4886256/o-n-solution-rust
 pub fn find_minimum_operations(s1: String, s2: String, s3: String) -> i32 {
     let (x, y, z) = (s1.len(), s2.len(), s3.len());
     let (mut i, m) = (0, x.min(y).min(z));
@@ -568,6 +571,7 @@ pub fn find_minimum_operations(s1: String, s2: String, s3: String) -> i32 {
 
 // <=======================================================================>
 
+// mine (not posted)
 pub fn count_substrings(s: String, c: char) -> i64 {
     let m = s.chars().filter(|&ch| ch == c).count() as i64;
     m * (m + 1) / 2
@@ -575,6 +579,7 @@ pub fn count_substrings(s: String, c: char) -> i64 {
 
 // <=======================================================================>
 
+// don't remember
 pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
     arra.sort_unstable();
     let m = arra.windows(2).map(|p| p[1] - p[0]).min().unwrap();
@@ -588,6 +593,7 @@ pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
 
 // <=======================================================================>
 
+// mine (not posted)
 pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
     nums.sort_unstable();
     nums.iter().rev().filter_map(|i| {
@@ -601,6 +607,7 @@ pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
 
 // <=======================================================================>
 
+// mine (not posted)
 pub fn search(nums: Vec<i32>, tar: i32) -> i32 {
     let at = nums.partition_point(|&x| x >= nums[0]);
     if tar < nums[0] {
@@ -616,6 +623,7 @@ pub fn search(nums: Vec<i32>, tar: i32) -> i32 {
 
 // <=======================================================================>
 
+// author: https://leetcode.com/problems/minimum-deletions-to-make-string-k-special/solutions/4886256/o-n-solution-rust
 pub fn minimum_deletions(word: String, k: i32) -> i32 {
     let mut map = [0; 26];
     let mut ans = i32::MAX;
@@ -639,6 +647,7 @@ pub fn minimum_deletions(word: String, k: i32) -> i32 {
 
 // <=======================================================================>
 
+// author: https://leetcode.com/problems/game-of-life/solutions/3495635/o-1-space-in-place-solution-with-bit-manipulation
 pub fn game_of_life(a: &mut Vec<Vec<i32>>) {
     let n = a.len();
     let m = a[0].len();
@@ -676,6 +685,7 @@ use std::collections::HashMap;
 
 // <=======================================================================>
 
+// mine: https://leetcode.com/problems/maximum-length-substring-with-two-occurrences/solutions/4919093/0ms-one-liner-beats-100-spaces-runtimes-the-fastest-in-the-entire-world-btw-one-liner-xd
 fn maximum_length_substring(s: String) -> i32 {
     s
     .chars()
@@ -695,6 +705,35 @@ fn maximum_length_substring(s: String) -> i32 {
 
 // <=======================================================================>
 
+// mine (not posted)
+pub fn return_to_boundary_count(nums: Vec<i32>) -> i32 {
+    nums.iter()
+        .fold((0, 0), |(mut r, mut c), i| {
+            c += i; if c == 0 { r += 1; }
+            (r, c)
+        }).0
+}
+
+// <=======================================================================>
+
+// author: https://leetcode.com/problems/lexicographical-numbers/solutions/2969038/100-faster-solution-in-rust
+pub fn lexical_order(n: i32) -> Vec<i32> {
+    let mut res: Vec<i32> = Vec::new();
+
+    fn dfs(cur: i32, n: i32, res: &mut Vec<i32>) {
+        if cur > n { return }
+    
+        res.push(cur);
+        dfs(cur * 10, n, res);
+        if cur % 10 != 9 { dfs(cur + 1, n, res); }
+    }
+    
+    dfs(1, n, &mut res);
+    res
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovstr {
     ($($str: expr), *) => {
@@ -703,6 +742,7 @@ macro_rules! tovstr {
 }
 
 fn main() {
+    dbg!(return_to_boundary_count(vec![2, 3, -5]));
     dbg!(maximum_length_substring("aaaa".to_owned()));
     dbg!(minimum_deletions("aabcaba".to_owned(), 0));
     dbg!(minimum_abs_difference(vec![4, 2, 1, 3]));
