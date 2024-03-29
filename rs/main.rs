@@ -734,6 +734,57 @@ pub fn lexical_order(n: i32) -> Vec<i32> {
 
 // <=======================================================================>
 
+pub fn decrypt(code: Vec<i32>, k: i32) -> Vec<i32> {
+    let len = code.len() as i32;
+    match k {
+        0 => vec![0; len as usize],
+        _ => if k < 0 { (0..len).map(|index| (index + k..index).map(|i| code[i.rem_euclid(len) as usize]).sum()).collect() }
+             else { (0..len).map(|index| (index + 1..=index + k).map(|i| code[i.rem_euclid(len) as usize]).sum()).collect() }
+    }
+}
+
+// <=======================================================================>
+
+macro_rules! c_ {
+    ($l: ident, $r: ident, $i: ident) => { ($l.is_none() || $l.unwrap() + 1 < $i) && ($r.is_none() || $r.unwrap() - 1 > $i) };
+}
+
+pub fn find_lonely(mut n: Vec<i32>) -> Vec<i32> {
+    n.sort_unstable();
+    n
+    .iter()
+    .enumerate()
+    .fold(Vec::new(), |mut ret, (idx, &i)| {
+        let l = n.get(idx - 1);
+        let r = n.get(idx + 1);
+        if c_!(l, r, i) {
+            ret.push(i);
+        } ret
+    })
+}
+
+macro_rules! c {
+    ($m: ident, $i: expr) => { $m[$i].eq(&1) && $m[$i - 1].eq(&0) && $m[$i + 1].eq(&0) };
+}
+
+macro_rules! p {
+    ($m: ident, $n: ident) => { $n.iter().for_each(|&i| $m[i as usize + 1] += 1) };
+}
+
+pub fn find_lonely_(n: Vec<i32>) -> Vec<i32> {
+    let mut m = [0; 7 + 10usize.pow(6)]; p!(m, n);
+    n
+    .iter()
+    .fold(Vec::new(), |mut ret, &i| {
+        let i_ = i as usize + 1;
+        if c!(m, i_) {
+            ret.push(i);
+        } ret
+    })
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovstr {
     ($($str: expr), *) => {
@@ -742,6 +793,7 @@ macro_rules! tovstr {
 }
 
 fn main() {
+    dbg!(find_lonely_(vec![1,3,5,3]));
     dbg!(return_to_boundary_count(vec![2, 3, -5]));
     dbg!(maximum_length_substring("aaaa".to_owned()));
     dbg!(minimum_deletions("aabcaba".to_owned(), 0));
