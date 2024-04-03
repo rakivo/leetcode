@@ -2,7 +2,7 @@
 pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     fn dfs(i: i32, j: i32, grid: &mut Vec<Vec<char>>, n: &i32, n0: &i32) -> bool {
-        if i < 0
+	if i < 0
         || j < 0
         || i >= *n
         || j >= *n0
@@ -48,8 +48,8 @@ impl ListNode {
 
 fn gcd(mut a: i32, mut b: i32) -> i32 {
     while b != 0 {
-        if b < a { std::mem::swap(&mut b, &mut a); } 
-        b %= a; 
+        if b < a { std::mem::swap(&mut b, &mut a); }
+        b %= a;
     } a
 }
 
@@ -599,8 +599,8 @@ pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
     nums.iter().rev().filter_map(|i| {
          if nums.binary_search(&-i).is_ok() {
             Some(*i)
-        } else { 
-            None 
+        } else {
+            None
         }
     }).max().unwrap_or(-1)
 }
@@ -631,7 +631,7 @@ pub fn minimum_deletions(word: String, k: i32) -> i32 {
     for c in word.chars() {
         map[c as usize - 97] += 1;
     }
-    
+
     for &x in map.iter() {
         let high = x + k;
         ans = ans.min
@@ -722,12 +722,12 @@ pub fn lexical_order(n: i32) -> Vec<i32> {
 
     fn dfs(cur: i32, n: i32, res: &mut Vec<i32>) {
         if cur > n { return }
-    
+
         res.push(cur);
         dfs(cur * 10, n, res);
         if cur % 10 != 9 { dfs(cur + 1, n, res); }
     }
-    
+
     dfs(1, n, &mut res);
     res
 }
@@ -763,6 +763,8 @@ pub fn find_lonely(mut n: Vec<i32>) -> Vec<i32> {
     })
 }
 
+// <=======================================================================>
+
 macro_rules! c {
     ($m: ident, $i: expr) => { $m[$i].eq(&1) && $m[$i - 1].eq(&0) && $m[$i + 1].eq(&0) };
 }
@@ -785,6 +787,83 @@ pub fn find_lonely_(n: Vec<i32>) -> Vec<i32> {
 
 // <=======================================================================>
 
+macro_rules! c__ {
+    ($ret: expr) => {{
+        let r = $ret;
+        if r.eq(&i32::MAX) { -1 } else { r }
+    }};
+}
+
+pub fn minimum_subarray_length(n: Vec<i32>, k: i32) -> i32 {
+    c__!(n
+    .iter()
+    .enumerate()
+    .fold((0, 0, i32::MAX, [0; 32]),
+          |(mut i, mut t, mut ret, mut bits), (j, nj)|
+          {
+              t |= nj;
+              (0..32).rev().for_each(|b| bits[b] += (nj >> b) & 1);
+              while i <= j && t >= k {
+                  ret = ret.min((j - i + 1) as i32);
+                  (0..32).rev().for_each(|b| {
+                      bits[b] -= (n[i] >> b) & 1;
+                      if bits[b].eq(&0) { t &= !(1 << b); }
+                  }); i += 1;
+              } (i, t, ret, bits)
+          }).2)
+}
+
+// <=======================================================================>
+
+pub fn sum_of_the_digits_of_harshad_number(x: i32) -> i32 {
+    fn digits(x: &i32) -> i32 {
+        if *x < 10 { *x }
+        else { x % 10 + digits(&(x / 10)) }
+    }
+    let s = digits(&x);
+    if (x % s).eq(&0) { s } else { -1 }
+}
+
+// <=======================================================================>
+
+macro_rules! bin {
+    ($n: ident, $ko: expr, $t: ident, $k: ident, $i: ident, $ni: expr) => {
+        match $n[$ko..].binary_search_by_key(&($t - *$ni), |&(_, nj)| *nj) {
+            Ok(ok) => Some(vec![*$i as i32, $n[ok + $k + 1].0 as i32]),
+            Err(_) => None
+        }
+    };
+}
+
+pub fn two_sum(n: Vec<i32>, t: i32) -> Vec<i32>  {
+    let mut n = n.iter().enumerate().collect::<Vec<_>>();
+    n.sort_unstable_by_key(|&(_, x)| x);
+    n
+    .iter()
+    .enumerate()
+    .filter_map(|(k, (i, ni))| bin!(n, k + 1, t, k, i, ni))
+    .next()
+    .unwrap_or(Vec::new())
+}
+
+// <=======================================================================>
+
+pub fn level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
+    fn traverse(root: &Option<&Rc<RefCell<TreeNode>>>, ret: &mut Vec<Vec<i32>>, n: &mut usize, lvl: &usize) {
+        if let Some(node) = root {
+            if n.eq(&lvl) { ret.push(Vec::new()); *n += 1; }
+            ret[*lvl].push(node.borrow().val);
+            traverse(&node.borrow().left.as_ref(), ret, n, &(lvl + 1));
+            traverse(&node.borrow().right.as_ref(), ret, n, &(lvl + 1));
+        }
+    }
+    let mut ret = Vec::new();
+    traverse(&root.as_ref(), &mut ret, &mut 0usize, &0);
+    ret
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovstr {
     ($($str: expr), *) => {
@@ -793,6 +872,9 @@ macro_rules! tovstr {
 }
 
 fn main() {
+    dbg!(two_sum(vec![3, 2, 4], 6));
+    dbg!(sum_of_the_digits_of_harshad_number(23));
+    dbg!(minimum_subarray_length(vec![1, 2, 3], 2));
     dbg!(find_lonely_(vec![1,3,5,3]));
     dbg!(return_to_boundary_count(vec![2, 3, -5]));
     dbg!(maximum_length_substring("aaaa".to_owned()));
