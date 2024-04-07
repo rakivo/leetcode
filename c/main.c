@@ -12,7 +12,7 @@ struct TreeNode {
     struct TreeNode *right;
 };
 
-int** levelOrderBottom(struct TreeNode* root, int* returnSize, int** returnColumnSizes){
+int** levelOrderBottom(struct TreeNode* root, int* returnSize, int** returnColumnSizes) {
     struct TreeNode *n[2000] = { root };
 
     int sz = 2000, **a = malloc(sizeof(int *[sz]));

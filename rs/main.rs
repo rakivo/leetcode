@@ -173,7 +173,6 @@ impl RandomizedSet {
     }
 }
 
-
 // <=============================================================================>
 
 use std::collections::HashSet;
@@ -275,10 +274,10 @@ pub fn count_prefix_suffix_pairs(words: Vec<String>) -> i64 {
         let n = w.len();
         map.iter().for_each(|(k, (v, len))| {
             if *len <= n
-                && w.starts_with(k)
-                && w.ends_with(k) {
-                    acc += v;
-                }
+            && w.starts_with(k)
+            && w.ends_with(k) {
+                acc += v;
+            }
         });
         map.entry(w.as_str()).or_insert_with(|| (0, n)).0 += 1;
         (acc, map)
@@ -352,8 +351,8 @@ fn find_and_replace_pattern(words: Vec<String>, pattern: String) -> Vec<String> 
         let mut w2pmap = HashMap::new();
         let mut p2wmap = HashMap::new();
 
-        let ch_word = word.chars().collect::<Vec<char>>();
-        let ch_patt = pattern.chars().collect::<Vec<char>>();
+        let ch_word = word.chars().collect::<Vec<_>>();
+        let ch_patt = pattern.chars().collect::<Vec<_>>();
 
         for i in 0..ch_word.len() {
             if let Some(&prevw) = p2wmap.get(&ch_patt[i]) {
@@ -372,19 +371,13 @@ fn find_and_replace_pattern(words: Vec<String>, pattern: String) -> Vec<String> 
 // <=======================================================================>
 
 pub fn can_be_typed_words(text: String, bale: String) -> i32 {
-    text.split_whitespace()
-        .filter(|w|
-            bale.chars()
-                .all(|c| !w.contains(c))
-        ).count() as i32
+    text.split_whitespace().filter(|w| bale.chars().all(|c| !w.contains(c))).count() as i32
 }
 
 // <=======================================================================>
 
 pub fn count_prefixes(words: Vec<String>, s: String) -> i32 {
-    words.iter()
-        .filter(|&prefix| s.starts_with(prefix))
-        .count() as i32
+    words.iter().filter(|&prefix| s.starts_with(prefix)).count() as i32
 }
 
 // <=======================================================================>
@@ -492,8 +485,8 @@ pub fn beautiful_substrings(s: String, k: i32) -> i32 {
             dp[i].0 += 1;
         } else {
             dp[i].1 += 1;
-        } println!("c: {c}, i: {i}, dp: {dp:?}");
-    } println!();
+        }
+    }
 
     let mut t = 0;
     for i in 0..n {
@@ -507,7 +500,7 @@ pub fn beautiful_substrings(s: String, k: i32) -> i32 {
 
             if v == c && (v * c) % k == 0 {
                 t += 1;
-            } println!("i: {i}, j: {j}, v: {v}, c: {c}, t: {t}, dp[i] = {:?}, dp[j] = {:?}", dp[i], dp[j]);
+            }
         }
     } t
 }
@@ -864,6 +857,48 @@ pub fn level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
 
 // <=======================================================================>
 
+macro_rules! gm {
+    ($ws: ident, $n: ident) => {
+        $ws.iter().map(|w| {$n += 1; w.as_bytes().iter().fold((0, 0), |(acc, len), x| (acc | 1 << (x - 'a' as u8), len + 1))}).collect::<Vec<_>>()
+    };
+}
+
+pub fn max_product(ws: Vec::<String>) -> i32 {
+    let (mut n, mut m) = (0, 0);
+    let mp = gm!(ws, n);
+    
+    for i in 0..n - 1 {
+        for j in i + 1..n {
+            if (mp[i].0 & mp[j].0).eq(&0) {
+                m = m.max(mp[i].1 * mp[j].1)
+            }
+        }
+    } m
+}
+
+// <=======================================================================>
+
+pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
+    nums.iter()
+        .skip(1)
+        .zip(nums.iter())
+        .fold((1, 1, 1), |(inc, dec, max), (ni, nj)|
+              sv(&ni, &nj, &inc, &dec, &max)
+        ).2
+}
+
+fn sv(ni: &i32, nj: &i32, inc: &i32, dec: &i32, max: &i32) -> (i32, i32, i32) {
+    if ni > nj {
+        ((inc + 1), 1, *max.max(&(inc + 1)).max(&1))
+    } else if ni < nj {
+        (1, dec + 1, *max.max(&1).max(&(dec + 1)))
+    } else {
+        (1, 1, *max.max(&1))
+    }    
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovstr {
     ($($str: expr), *) => {
@@ -872,6 +907,7 @@ macro_rules! tovstr {
 }
 
 fn main() {
+    dbg!(longest_monotonic_subarray(vec![3,2,1]));
     dbg!(two_sum(vec![3, 2, 4], 6));
     dbg!(sum_of_the_digits_of_harshad_number(23));
     dbg!(minimum_subarray_length(vec![1, 2, 3], 2));
