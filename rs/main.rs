@@ -985,10 +985,12 @@ impl Bank {
 }
 
 #[allow(unused)]
-macro_rules! tovstr {
-    ($($str: expr), *) => {
-        vec![$($str.to_owned()), *]
-    };
+macro_rules! tovsstring {
+    ($($str: expr), *) => { vec![$($str.to_owned()), *] }
+}
+
+macro_rules! own {
+    ($str: expr) => { $str.to_owned() }
 }
 
 fn main() {
@@ -998,11 +1000,11 @@ fn main() {
     dbg!(minimum_subarray_length(vec![1, 2, 3], 2));
     dbg!(find_lonely_(vec![1,3,5,3]));
     dbg!(return_to_boundary_count(vec![2, 3, -5]));
-    dbg!(maximum_length_substring("aaaa".to_owned()));
-    dbg!(minimum_deletions("aabcaba".to_owned(), 0));
+    dbg!(maximum_length_substring(own!("aaaa")));
+    dbg!(minimum_deletions(own!("aabcaba"), 0));
     dbg!(minimum_abs_difference(vec![4, 2, 1, 3]));
-    dbg!(count_substrings("abada".to_owned(), 'a'));
-    dbg!(find_minimum_operations("abc".to_owned(), "abb".to_owned(), "ab".to_owned()));
-    dbg!(is_substring_present1("abcd".to_owned()));
+    dbg!(count_substrings(own!("abada"), 'a'));
+    dbg!(find_minimum_operations(own!("abc"), own!("abb"), own!("ab")));
+    dbg!(is_substring_present1(own!("abcd")));
     dbg!(sum_of_encrypted_int(vec![10, 21, 31]));
 }
