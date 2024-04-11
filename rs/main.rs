@@ -879,12 +879,8 @@ pub fn max_product(ws: Vec::<String>) -> i32 {
 // <=======================================================================>
 
 pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
-    nums.iter()
-        .skip(1)
-        .zip(nums.iter())
-        .fold((1, 1, 1), |(inc, dec, max), (ni, nj)|
-              sv(&ni, &nj, &inc, &dec, &max)
-        ).2
+    nums.windows(2)
+        .fold((1, 1, 1), |(inc, dec, max), w| sv(&w[1], &w[0], &inc, &dec, &max)).2
 }
 
 fn sv(ni: &i32, nj: &i32, inc: &i32, dec: &i32, max: &i32) -> (i32, i32, i32) {
@@ -894,10 +890,99 @@ fn sv(ni: &i32, nj: &i32, inc: &i32, dec: &i32, max: &i32) -> (i32, i32, i32) {
         (1, dec + 1, *max.max(&1).max(&(dec + 1)))
     } else {
         (1, 1, *max.max(&1))
-    }    
+    }
 }
 
 // <=======================================================================>
+
+pub fn longest_monotonic_subarray_basic(nums: Vec<i32>) -> i32 {
+    nums.windows(2)
+        .fold((1, 1, 1), |(inc, dec, max), w| {
+            if w[1] > w[0] {
+                ((inc + 1), 1, max.max(inc + 1).max(1))
+            } else if w[1] < w[0] {
+                (1, dec + 1, max.max(dec + 1).max(1))
+            } else {
+                (1, 1, max.max(1))
+            }
+        }).2
+}
+
+// <=======================================================================>
+
+pub fn kth_smallest(root: Option<Rc<RefCell<TreeNode>>>, k: i32) -> i32 {
+    (0..=0).fold((Vec::new(), 0xFFFFFFF), |(mut mins, _ ), _| {
+        fn traverse__(root: &Option<&Rc<RefCell<TreeNode>>>, k: &i32, mins: &mut Vec<i32>) {
+            if let Some(node) = root {
+                mins.push(node.borrow().val);
+                traverse__(&node.borrow().left.as_ref(), &k, mins);
+                traverse__(&node.borrow().right.as_ref(), &k, mins);
+            }
+        }
+        traverse__(&root.as_ref(), &k, &mut mins);
+        mins.sort_unstable();
+        let kmin = mins[k as usize - 1];
+        (mins, kmin)
+    }).1
+}
+
+// <=======================================================================>
+
+#[allow(unused)]
+struct Bank {
+    bals: Vec<i64>,
+    size: i32
+}
+
+#[allow(unused)]
+impl Bank {
+    #[inline]
+    fn new(bals: Vec<i64>) -> Bank {
+        let size = bals.len() as i32;
+        Bank { bals, size }
+    }
+
+    #[inline]
+    fn check_bounds(&self, acc1: &i32, acc2: &i32) -> bool {
+        *acc1 <= self.size && *acc2 <= self.size
+    }
+    
+    #[inline]
+    fn get_bal(&mut self, acc: &i32) -> i64 {
+        self.bals[*acc as usize - 1]
+    }
+
+    #[inline]
+    fn get_mut_bal(&mut self, acc: &i32) -> &mut i64 {
+        &mut self.bals[*acc as usize - 1]
+    }
+
+    fn transfer(&mut self, acc1: i32, acc2: i32, money: i64) -> bool {
+        if self.check_bounds(&acc1, &acc2)
+        && self.get_bal(&acc1) >= money
+        {
+            *self.get_mut_bal(&acc1) -= money;
+            *self.get_mut_bal(&acc2) += money;
+            true
+        } else { false }
+    }
+
+    fn deposit(&mut self, acc: i32, money: i64) -> bool {
+        if self.check_bounds(&acc, &0) {
+            *self.get_mut_bal(&acc) += money;
+            true
+        } else { false }
+    }
+
+    fn withdraw(&mut self, acc: i32, money: i64) -> bool {
+        if self.check_bounds(&acc, &0)
+        && self.get_bal(&acc) >= money
+        {
+            *self.get_mut_bal(&acc) -= money;
+            true
+        } else { false }
+    }
+}
 
 #[allow(unused)]
 macro_rules! tovstr {
