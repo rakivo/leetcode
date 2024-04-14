@@ -910,9 +910,11 @@ pub fn longest_monotonic_subarray_basic(nums: Vec<i32>) -> i32 {
 
 // <=======================================================================>
 
-pub fn kth_smallest(root: Option<Rc<RefCell<TreeNode>>>, k: i32) -> i32 {
+type TL = Rc<RefCell<TreeNode>>;
+
+pub fn kth_smallest(root: Option<TL>, k: i32) -> i32 {
     (0..=0).fold((Vec::new(), 0xFFFFFFF), |(mut mins, _ ), _| {
-        fn traverse__(root: &Option<&Rc<RefCell<TreeNode>>>, k: &i32, mins: &mut Vec<i32>) {
+        fn traverse__(root: &Option<&TL>, k: &i32, mins: &mut Vec<i32>) {
             if let Some(node) = root {
                 mins.push(node.borrow().val);
                 traverse__(&node.borrow().left.as_ref(), &k, mins);
@@ -984,6 +986,87 @@ impl Bank {
     }
 }
 
+// <=======================================================================>
+
+pub fn score_of_string(s: String) -> i32 {
+    s
+    .chars()
+    .collect::<Vec<_>>()
+    .windows(2)
+    .map(|w| (w[1] as i32 - w[0] as i32).abs())
+    .sum::<i32>()
+}
+
+// <=======================================================================>
+
+pub fn min_rectangles_to_cover_points(mut pts: Vec<Vec<i32>>, w: i32) -> i32 {
+    pts.sort_unstable();
+    (0..pts.len())
+        .fold((1, w + pts[0][0]), |(ret, next), i| {
+            if pts[i][0] > next {
+                (ret + 1, pts[i][0] + w)
+            } else {
+                (ret, next)
+            }
+        }).0
+}
+
+// <=======================================================================>
+
+fn mod_exp(mut base: u64, mut exp: u64, modu: u64) -> u64 {
+    let mut ret = 1;
+    base %= modu;
+    while exp > 0 {
+        if (exp & 1).eq(&1) {
+            ret = (ret * base) % modu;
+        }
+        exp >>= 1;
+        base = (base * base) % modu;
+    } ret
+}
+
+// https://en.wikipedia.org/wiki/Xorshift
+fn prng(state: &mut u64) -> u64 {
+    *state ^= *state << 13;
+    *state ^= *state >> 7;
+    *state ^= *state << 17;
+    *state
+}
+
+const ITERATIONS: u64 = 4;
+const XORSHIFT_STATE: u64 = 0xFFFFFFFFFFFFFFFF;
+
+// https://en.wikipedia.org/wiki/Fermat_primality_test
+fn fermat(n: u64, mut state: u64) -> bool {
+    if n <= 1 {
+        return false;
+    } else if n <= 3 {
+        return true;
+    }
+    for _ in 0..ITERATIONS {
+        let a = prng(&mut state) % (n - 1) + 1;
+        if mod_exp(a, n - 1, n) != 1 {
+            return false;
+        }
+    } true
+}
+
+pub fn maximum_prime_difference(nums: Vec<i32>) -> i32 {
+    ((0..nums.len()).find(|&i| fermat(nums[i] as u64, XORSHIFT_STATE)).unwrap() as i32)
+        .abs_diff((0..nums.len()).rev().find(|&i| fermat(nums[i] as u64, XORSHIFT_STATE)).unwrap() as i32) as i32
+}
+
+// <=======================================================================>
+
+const PRIMES: [bool; 101] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false];
+
+pub fn maximum_prime_difference_(nums: Vec<i32>) -> i32 {
+    ((0..nums.len()).find(|&i| PRIMES[nums[i] as usize]).unwrap() as i32)
+        .abs_diff((0..nums.len()).rev().find(|&i| PRIMES[nums[i] as usize]).unwrap() as i32) as i32
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
@@ -994,6 +1077,8 @@ macro_rules! own {
 }
 
 fn main() {
+    dbg!(maximum_prime_difference(vec![4,8,2,8]));
+    dbg!(score_of_string(own!("hello")));
     dbg!(longest_monotonic_subarray(vec![3,2,1]));
     dbg!(two_sum(vec![3, 2, 4], 6));
     dbg!(sum_of_the_digits_of_harshad_number(23));
