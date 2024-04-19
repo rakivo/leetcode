@@ -948,7 +948,7 @@ impl Bank {
     fn check_bounds(&self, acc1: &i32, acc2: &i32) -> bool {
         *acc1 <= self.size && *acc2 <= self.size
     }
-    
+
     #[inline]
     fn get_bal(&mut self, acc: &i32) -> i64 {
         self.bals[*acc as usize - 1]
@@ -1067,6 +1067,79 @@ pub fn maximum_prime_difference_(nums: Vec<i32>) -> i32 {
 
 // <=======================================================================>
 
+pub fn find_latest_time(s: String) -> String {
+    s.chars().enumerate().fold(String::new(), |mut ret, (i, c)| {
+        ret.push(if !c.eq(&'?') { c } else {
+            match i {
+                0 => {
+                    let next = s.chars().nth(1).unwrap();
+                    if next.eq(&'1')
+                    || next.eq(&'?')
+                    || next.eq(&'0')
+                         { '1' }
+                    else { '0' }
+                },
+                1 => {
+                    let prev = s.chars().nth(0).unwrap();
+                    if prev.eq(&'1')
+                    || prev.eq(&'?')
+                         { '1' }
+                    else { '9' }
+                },
+                3 => '5',
+                _ => '9'
+            }
+        }); ret
+    })
+}
+
+
+// <=======================================================================>
+
+pub fn count_even(num: i32) -> i32 {
+    (2..=num).filter(|i| {
+        let (mut sum, mut x) = (0, *i);
+        while x > 0 {
+            sum += x % 10;
+            x /= 10;
+        }
+        (sum & 1).eq(&0)
+    }).count() as i32
+}
+
+// <=======================================================================>
+
+pub fn find_lucky(arr: Vec<i32>) -> i32 {
+    (0..=0).fold(-0xFFFFFFF, |_, _| {
+        let map = arr.iter().fold([0; 501], |mut map, i| {
+            map[*i as usize] += 1; map
+        });
+        arr.iter().fold(-1, |ret, i|
+            if i.eq(&map[*i as usize]) {
+                ret.max(*i)
+            } else { ret }
+        )
+    })
+}
+
+// <=======================================================================>
+
+pub fn pick_gifts(gifts: Vec<i32>, mut k: i32) -> i64 {
+    (0..=0).fold(-0xFFFFFFFFFFFFFF, |_, _| {
+        if gifts.len().eq(&1) { return 1 }
+        else if gifts[0].eq(&gifts[gifts.len() - 1]) { return gifts.iter().sum::<i32>() as i64 }
+
+        let mut pq = std::collections::BinaryHeap::<i64>::from(gifts.iter().map(|x| *x as i64).collect::<Vec<_>>());
+        while k > 0 {
+            let i = pq.pop().unwrap();
+            pq.push((i as f64 + 0.5).sqrt() as i64);
+            k -= 1;
+        } pq.iter().sum()
+    })
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
@@ -1077,6 +1150,10 @@ macro_rules! own {
 }
 
 fn main() {
+    dbg!(pick_gifts(vec![25,64,9,4,100], 4));
+    dbg!(find_lucky(vec![2, 2, 3, 4]));
+    dbg!(count_even(30));
+    dbg!(find_latest_time(own!("1?:?4")));
     dbg!(maximum_prime_difference(vec![4,8,2,8]));
     dbg!(score_of_string(own!("hello")));
     dbg!(longest_monotonic_subarray(vec![3,2,1]));
