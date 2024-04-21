@@ -679,6 +679,7 @@ use std::collections::HashMap;
 // <=======================================================================>
 
 // mine: https://leetcode.com/problems/maximum-length-substring-with-two-occurrences/solutions/4919093/0ms-one-liner-beats-100-spaces-runtimes-the-fastest-in-the-entire-world-btw-one-liner-xd
+#[allow(unused)]
 fn maximum_length_substring(s: String) -> i32 {
     s
     .chars()
@@ -1140,33 +1141,61 @@ pub fn pick_gifts(gifts: Vec<i32>, mut k: i32) -> i64 {
 
 // <=======================================================================>
 
+const MONTHS: &[&str] = &["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+pub fn reformat_date(date: String) -> String {
+    let splitted = date.split_whitespace().collect::<Vec<_>>();
+    let (d, m, y) = (splitted[0], splitted[1], splitted[2]);
+
+    format!("{y}-{:02}-{:02}", MONTHS.iter().position(|m_| m_.eq(&m)).unwrap() + 1, d[..d.len() - 2].parse::<u8>().unwrap())
+}
+
+// <=======================================================================>
+
+pub fn count_asterisks(s: String) -> i32 {
+    s
+    .split('|')
+    .step_by(2)
+    .map(|g| g.chars().filter(|c| c.eq(&'*')).count())
+    .sum::<usize>() as i32
+}
+
+// <=======================================================================>
+
+pub fn check_x_matrix(grid: Vec<Vec<i32>>) -> bool {
+    let n = grid.len();
+    for y in 0..n {
+        for x in 0..n {
+            if ((y.eq(&x) || ((y + x).eq(&(n - 1)))) && grid[y][x].eq(&0))
+            || !(y.eq(&x) || ((y + x).eq(&(n - 1)))) && !grid[y][x].eq(&0)
+                { return false; }
+        }
+    } true
+}
+
+// <=======================================================================>
+
+pub fn number_of_special_chars(word: String) -> i32 {
+    word.chars().fold([0; 26], |mut map, c| {
+        let i = c.to_ascii_lowercase() as usize - 'a' as usize;
+        if c.is_ascii_uppercase() {
+            map[i] |= 0b10;
+        } else {
+            map[i] |= 0b01;
+        } map
+    }).iter().filter(|x| x.eq(&&0b11)).count() as i32
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
 }
 
+#[allow(unused)]
 macro_rules! own {
     ($str: expr) => { $str.to_owned() }
 }
 
-fn main() {
-    dbg!(pick_gifts(vec![25,64,9,4,100], 4));
-    dbg!(find_lucky(vec![2, 2, 3, 4]));
-    dbg!(count_even(30));
-    dbg!(find_latest_time(own!("1?:?4")));
-    dbg!(maximum_prime_difference(vec![4,8,2,8]));
-    dbg!(score_of_string(own!("hello")));
-    dbg!(longest_monotonic_subarray(vec![3,2,1]));
-    dbg!(two_sum(vec![3, 2, 4], 6));
-    dbg!(sum_of_the_digits_of_harshad_number(23));
-    dbg!(minimum_subarray_length(vec![1, 2, 3], 2));
-    dbg!(find_lonely_(vec![1,3,5,3]));
-    dbg!(return_to_boundary_count(vec![2, 3, -5]));
-    dbg!(maximum_length_substring(own!("aaaa")));
-    dbg!(minimum_deletions(own!("aabcaba"), 0));
-    dbg!(minimum_abs_difference(vec![4, 2, 1, 3]));
-    dbg!(count_substrings(own!("abada"), 'a'));
-    dbg!(find_minimum_operations(own!("abc"), own!("abb"), own!("ab")));
-    dbg!(is_substring_present1(own!("abcd")));
-    dbg!(sum_of_encrypted_int(vec![10, 21, 31]));
-}
+fn main() {}
