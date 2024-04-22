@@ -1094,7 +1094,6 @@ pub fn find_latest_time(s: String) -> String {
     })
 }
 
-
 // <=======================================================================>
 
 pub fn count_even(num: i32) -> i32 {
@@ -1168,7 +1167,7 @@ pub fn check_x_matrix(grid: Vec<Vec<i32>>) -> bool {
         for x in 0..n {
             if ((y.eq(&x) || ((y + x).eq(&(n - 1)))) && grid[y][x].eq(&0))
             || !(y.eq(&x) || ((y + x).eq(&(n - 1)))) && !grid[y][x].eq(&0)
-                { return false; }
+                { return false  }
         }
     } true
 }
@@ -1178,7 +1177,7 @@ pub fn check_x_matrix(grid: Vec<Vec<i32>>) -> bool {
 pub fn number_of_special_chars(word: String) -> i32 {
     word.chars().fold([0; 26], |mut map, c| {
         let i = c.to_ascii_lowercase() as usize - 'a' as usize;
-        if c.is_ascii_uppercase() {
+        if c.is_uppercase() {
             map[i] |= 0b10;
         } else {
             map[i] |= 0b01;
@@ -1187,6 +1186,39 @@ pub fn number_of_special_chars(word: String) -> i32 {
 }
 
 // <=======================================================================>
+
+pub fn find_kth_positive(arr: Vec<i32>, mut k: i32) -> i32 {
+    arr.iter().any(|&x| { if x <= k { k += 1 } x >= k }); k
+}
+
+// <=======================================================================>
+
+pub fn k_length_apart_(nums: Vec<i32>, k: i32) -> bool {
+    for w in nums.iter()
+        .enumerate()
+        .filter_map(|(i, x)| if x.eq(&1) { Some(i) } else { None })
+        .collect::<Vec<_>>()
+        .windows(2) {
+            if w[1] - w[0] <= k as usize { return false }
+        } true
+}
+
+// <=======================================================================>
+
+pub fn k_length_apart(nums: Vec<i32>, k: i32) -> bool {
+    nums.iter()
+        .enumerate()
+        .fold((-0xFFFFFFF, true), |(mut l, mut r), (i, x)| {
+            if x.eq(&1) {
+                if !l.eq(&-0xFFFFFFF) {
+                    if i as i32 - l - 1 < k { r = false }                   
+                } l = i as i32;
+            } (l, r)
+        }).1
+}
+
+// <=======================================================================>
+
 
 #[allow(unused)]
 macro_rules! tovsstring {
@@ -1198,4 +1230,8 @@ macro_rules! own {
     ($str: expr) => { $str.to_owned() }
 }
 
-fn main() {}
+fn main() {
+    dbg!(k_length_apart(vec![1,0,0,0,1,0,0,1], 2));
+    dbg!(find_kth_positive(vec![2, 3, 4, 7, 11], 5));
+    dbg!(number_of_special_chars(own!("aaAbcBC")));
+}
