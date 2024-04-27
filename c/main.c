@@ -229,7 +229,8 @@ const pos POSITIONS[4][4] = {
     {{1, 1}, {1, 2}, {2, 1}, {2, 2}}
 };
 
-bool canMakeSquare(char** grid, int, int*) {
+bool canMakeSquare(char** grid, int, int*)
+{
     #pragma omp parallel for
     for (it i = {0, {-2, -2}}; i.i < 4; ++i.i, i.ret.x = -2, i.ret.y = -2) {
         for (size_t j = 0; j < 4; j++)
