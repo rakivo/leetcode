@@ -1167,7 +1167,7 @@ pub fn check_x_matrix(grid: Vec<Vec<i32>>) -> bool {
         for x in 0..n {
             if ((y.eq(&x) || ((y + x).eq(&(n - 1)))) && grid[y][x].eq(&0))
             || !(y.eq(&x) || ((y + x).eq(&(n - 1)))) && !grid[y][x].eq(&0)
-                { return false  }
+                { return false }
         }
     } true
 }
@@ -1176,7 +1176,7 @@ pub fn check_x_matrix(grid: Vec<Vec<i32>>) -> bool {
 
 pub fn number_of_special_chars(word: String) -> i32 {
     word.chars().fold([0; 26], |mut map, c| {
-        let i = c.to_ascii_lowercase() as usize - 'a' as usize;
+        let i = c.to_ascii_lowercase() as usize - 97; // 'a'
         if c.is_uppercase() {
             map[i] |= 0b10;
         } else {
@@ -1219,6 +1219,55 @@ pub fn k_length_apart(nums: Vec<i32>, k: i32) -> bool {
 
 // <=======================================================================>
 
+pub fn maximum_difference(nums: Vec<i32>) -> i32 {
+    let n = nums.len();
+    let mut ret = -1;
+    for i in 0..n - 1 {
+        for j in i + 1..n {
+            if nums[i] < nums[j] { ret = ret.max(nums[j] - nums[i]); }
+        }
+    } ret
+}
+
+// <=======================================================================>
+
+pub fn most_frequent_even(nums: Vec<i32>) -> i32 {
+    let mut evens = nums.iter().filter(|i| *i & 1 == 0).peekable();
+    if evens.peek().is_none() { return -1 }
+    
+    let (map, max) = evens.into_iter().fold((HashMap::new(), -0xFFFFFFF), |(mut map, mut max), i| {
+        let k = map.entry(i).or_insert(0);
+        *k += 1;
+        if *k > max { max = *k; }
+        (map, max)
+    });
+
+    **map.iter()
+        .filter(|(_, v)| **v == max)
+        .map(|(k, _)| k)
+        .min()
+        .unwrap()
+}
+
+// <=======================================================================>
+
+const POSITIONS: &[&[(usize, usize); 4]] = &[
+    &[(0, 0), (0, 1), (1, 0), (1, 1)],
+    &[(0, 1), (0, 2), (1, 1), (1, 2)],
+    &[(1, 0), (1, 1), (2, 0), (2, 1)],
+    &[(1, 1), (1, 2), (2, 1), (2, 2)]
+];
+
+pub fn can_make_square(grid: Vec<Vec<char>>) -> bool {
+    POSITIONS.iter().any(|&p| {
+        p.iter().fold([-2; 2], |mut ret, p| {
+            if grid[p.0][p.1].eq(&'W') { ret[0] += 1 }
+            else                       { ret[1] += 1 } ret
+        }).iter().any(|x| *x > 0)
+    })
+}
+    
+// <=======================================================================>
 
 #[allow(unused)]
 macro_rules! tovsstring {
@@ -1231,6 +1280,9 @@ macro_rules! own {
 }
 
 fn main() {
+    dbg!(can_make_square(vec![vec!['B','W','B'], vec!['W','B','W'], vec!['B','W','B']]));
+    dbg!(most_frequent_even(vec![0,1,2,2,4,4,1]));
+    dbg!(maximum_difference(vec![1,5,2,10]));
     dbg!(k_length_apart(vec![1,0,0,0,1,0,0,1], 2));
     dbg!(find_kth_positive(vec![2, 3, 4, 7, 11], 5));
     dbg!(number_of_special_chars(own!("aaAbcBC")));

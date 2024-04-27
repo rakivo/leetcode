@@ -12,7 +12,8 @@ struct TreeNode {
     struct TreeNode *right;
 };
 
-int** levelOrderBottom(struct TreeNode* root, int* returnSize, int** returnColumnSizes) {
+int** levelOrderBottom(struct TreeNode* root, int* returnSize, int** returnColumnSizes)
+{
     struct TreeNode *n[2000] = { root };
 
     int sz = 2000, **a = malloc(sizeof(int *[sz]));
@@ -36,11 +37,13 @@ typedef struct {
     int pf;
 } p;
 
-int cmp(const void* a, const void* b) {
+int cmp(const void* a, const void* b)
+{
     return *(int*)a - *(int*)b;
 }
 
-struct TreeNode* constructMaximumBinaryTree(int* nums, int size) {
+struct TreeNode* constructMaximumBinaryTree(int* nums, int size)
+{
     qsort(nums, size, sizeof(int), cmp);
 
     p* ps = (p*)malloc(size * sizeof(p));
@@ -67,37 +70,29 @@ struct TreeNode* constructMaximumBinaryTree(int* nums, int size) {
 #define max(x, y) (((x) > (y)) ? (x) : (y))
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
-int levenshtein(const char* s1, const char* s2) {
+int levenshtein(const char* s1, const char* s2)
+{
     const size_t m = strlen(s1);
     const size_t n = strlen(s2);
 
     int prev[n + 1];
     int curr[n + 1];
 
-    for (size_t i = 0; i <= n; ++i) {
-        prev[i] = i;
-    }
-
-    for (size_t i = 0; i <= m; i++) {
-        curr[0] = i;
+    for (size_t i = 0; i <= n; ++i) prev[i] = i;
+    for (size_t i = 0; i <= m; i++, curr[0] = i) {
         for (size_t j = 1; j <= n; j++) {
-            if (s1[i - 1] == s2[j -  1]) {
-                curr[j] = prev[j - 1];
-            }
-            else {
-                curr[j] = 1 + min(curr[j - 1], min(prev[j], prev[j - 1]));
-            }
+            if (s1[i - 1] == s2[j -  1]) curr[j] = prev[j - 1];
+            else curr[j] = 1 + min(curr[j - 1], min(prev[j], prev[j - 1]));
         }
-        for (size_t k = 0; k < n + 1; ++k) {
-            prev[k] = curr[k];
-        }
+        for (size_t k = 0; k < n + 1; ++k) prev[k] = curr[k];
     }
     return (int) curr[n];
 }
 
 // <=======================================================================>
 
-void preorder(struct TreeNode* root, struct TreeNode** prev) {
+void preorder(struct TreeNode* root, struct TreeNode** prev)
+{
     if (root == NULL) return;
     struct TreeNode* left = root->left;
     struct TreeNode* right = root->right;
@@ -119,12 +114,10 @@ void flatten(struct TreeNode* root) {
 
 // <=======================================================================>
 
-void perm(int* nums, int i, int* result_idx, int idx, int** result, int n) {
+void perm(int* nums, int i, int* result_idx, int idx, int** result, int n)
+{
     if (i == n) {
-        for (int j = 0; j < n; ++j) {
-            result[*result_idx][j] = nums[j];
-        }
-        (*result_idx)++;
+        for (int j = 0; j < n; ++j) result[(*result_idx)++][j] = nums[j];
         return;
     }
     for (int j = i; j < n; ++j) {
@@ -138,54 +131,45 @@ void perm(int* nums, int i, int* result_idx, int idx, int** result, int n) {
     }
 }
 
-int** permute(int* nums, int n, int* ret_size, int** ret_col_size) {
-    if (nums == NULL) {
-        return NULL;
-    }
+int** permute(int* nums, int n, int* ret_size, int** ret_col_size)
+{
+    if (nums == NULL) return NULL;
 
     int total_permutations = 1;
-    for (int i = 1; i <= n; ++i) {
-        total_permutations *= i;
-    }
+    for (int i = 1; i <= n; ++i) total_permutations *= i;
 
     int** result = (int**)malloc(total_permutations * sizeof(int*));
-    if (result == NULL) {
-        return NULL;
-    }
-    for (int i = 0; i < total_permutations; ++i) {
-        result[i] = (int*)malloc(n * sizeof(int));
-    }
+    if (result == NULL) return NULL;
+    for (int i = 0; i < total_permutations; ++i) result[i] = (int*)malloc(n * sizeof(int));
 
     int result_idx = 0;
     int idx = 0;
     perm(nums, 0, &result_idx, idx, result, n);
 
     *ret_col_size = (int*)malloc(total_permutations * sizeof(int));
-    for (int i = 0; i < total_permutations; ++i) {
-        (*ret_col_size)[i] = n;
-    }
+    for (int i = 0; i < total_permutations; ++i) (*ret_col_size)[i] = n;
 
     *ret_size = total_permutations;
     return result;
 }
 
-void traverse(int* max, struct TreeNode* root) {
-    if (!root) {
-        return;
-    }
+void traverse(int* max, struct TreeNode* root)
+{
+    if (!root) return;
+
     int r = 0, l = 0;
-    if (root->right) {
-        r = abs(*max - root->right->val);
-    } if (root->left) {
-        l = abs(*max - root->left->val);
-    }
+
+    if (root->right) r = abs(*max - root->right->val);
+    if (root->left)  l = abs(*max - root->left->val);
+
     *max = r > *max ? r : *max;
     *max = l > *max ? l : *max;
     traverse(max, root->right);
     traverse(max, root->left);
 }
 
-int maxAncestorDiff(struct TreeNode* root) {
+int maxAncestorDiff(struct TreeNode* root)
+{
     int ret = 0;
     traverse(&ret, root);
     return ret;
@@ -198,7 +182,8 @@ int** modifiedMatrix
 	const int* matcolsize,
 	int* const retsize,
 	const int** retcolsize
-) {
+ )
+ {
 	*retsize = matsize;
 	*retcolsize = matcolsize;
 
@@ -227,4 +212,39 @@ int** modifiedMatrix
 	return mat;
 }
 
-int main = 0;
+typedef struct {
+    int x;
+    int y;
+} pos;
+
+typedef struct {
+    size_t i;
+    pos ret;
+} it;
+
+const pos POSITIONS[4][4] = {
+    {{0, 0}, {0, 1}, {1, 0}, {1, 1}},
+    {{0, 1}, {0, 2}, {1, 1}, {1, 2}},
+    {{1, 0}, {1, 1}, {2, 0}, {2, 1}},
+    {{1, 1}, {1, 2}, {2, 1}, {2, 2}}
+};
+
+bool canMakeSquare(char** grid, int, int*) {
+    #pragma omp parallel for
+    for (it i = {0, {-2, -2}}; i.i < 4; ++i.i, i.ret.x = -2, i.ret.y = -2) {
+        for (size_t j = 0; j < 4; j++)
+            if (grid[POSITIONS[i.i][j].x][POSITIONS[i.i][j].y] == 'W')
+                i.ret.x++;
+            else
+                i.ret.y++;
+
+        for (int k = 1; k < 3; ++k) if (i.ret.x == k || i.ret.y == k) return true;
+    }
+    
+    return false;
+}
+
+int main(void)
+{
+    return 0;
+}
