@@ -2,7 +2,7 @@
 pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     fn dfs(i: i32, j: i32, grid: &mut Vec<Vec<char>>, n: &i32, n0: &i32) -> bool {
-	if i < 0
+    	if i < 0
         || j < 0
         || i >= *n
         || j >= *n0
@@ -1001,15 +1001,17 @@ pub fn score_of_string(s: String) -> i32 {
 // <=======================================================================>
 
 pub fn min_rectangles_to_cover_points(mut pts: Vec<Vec<i32>>, w: i32) -> i32 {
-    pts.sort_unstable();
-    (0..pts.len())
-        .fold((1, w + pts[0][0]), |(ret, next), i| {
-            if pts[i][0] > next {
-                (ret + 1, pts[i][0] + w)
-            } else {
-                (ret, next)
-            }
-        }).0
+    (0..=0).fold(pts.len(), |n, _| {
+        pts.sort_unstable();
+        (0..n)
+            .fold((1, w + pts[0][0]), |(ret, next), i| {
+                if pts[i][0] > next {
+                    (ret + 1, pts[i][0] + w)
+                } else {
+                    (ret, next)
+                }
+            }).0        
+    }) as i32
 }
 
 // <=======================================================================>
@@ -1143,10 +1145,10 @@ pub fn pick_gifts(gifts: Vec<i32>, mut k: i32) -> i64 {
 const MONTHS: &[&str] = &["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 pub fn reformat_date(date: String) -> String {
-    let splitted = date.split_whitespace().collect::<Vec<_>>();
-    let (d, m, y) = (splitted[0], splitted[1], splitted[2]);
-
-    format!("{y}-{:02}-{:02}", MONTHS.iter().position(|m_| m_.eq(&m)).unwrap() + 1, d[..d.len() - 2].parse::<u8>().unwrap())
+    (0..=0).fold(String::new(), |_, _| {
+        let s = date.split_whitespace().collect::<Vec<_>>();
+        format!("{}-{:02}-{:02}", s[2], MONTHS.iter().position(|m_| m_.eq(&s[1])).unwrap() + 1, s[0][..s[0].len() - 2].parse::<u8>().unwrap())
+    })
 }
 
 // <=======================================================================>
@@ -1260,13 +1262,35 @@ const POSITIONS: &[&[(usize, usize); 4]] = &[
 
 pub fn can_make_square(grid: Vec<Vec<char>>) -> bool {
     POSITIONS.iter().any(|&p| {
-        p.iter().fold([-2; 2], |mut ret, p| {
-            if grid[p.0][p.1].eq(&'W') { ret[0] += 1 }
-            else                       { ret[1] += 1 } ret
-        }).iter().any(|x| *x > 0)
+        match p.iter().fold((-2, -2), |(w, b), p| {
+            if grid[p.0][p.1].eq(&'W') { (w + 1, b) }
+            else                       { (w, b + 1) } 
+        })
+        {
+            (a, b) => [a, b]
+        }.iter().any(|x| *x > 0)
     })
 }
-    
+
+// <=======================================================================>
+
+pub fn added_integer(nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
+    nums2.iter().min().unwrap() - nums1.iter().min().unwrap()
+}
+
+// <=======================================================================>
+
+pub fn find_length_of_lcis(nums: Vec<i32>) -> i32 {
+    *match nums.windows(2)
+        .fold((1, 1), |(max, curr), w| {
+            if w[1] > w[0] { (max, curr + 1) }
+            else           { (max.max(curr), 1) }
+        })
+    {
+        (a, b) => vec![a, b]
+    }.iter().max().unwrap()
+}
+
 // <=======================================================================>
 
 #[allow(unused)]
@@ -1280,6 +1304,7 @@ macro_rules! own {
 }
 
 fn main() {
+    dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
     dbg!(can_make_square(vec![vec!['B','W','B'], vec!['W','B','W'], vec!['B','W','B']]));
     dbg!(most_frequent_even(vec![0,1,2,2,4,4,1]));
     dbg!(maximum_difference(vec![1,5,2,10]));

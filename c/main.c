@@ -68,7 +68,7 @@ struct TreeNode* constructMaximumBinaryTree(int* nums, int size)
 // <=======================================================================>
 
 #define max(x, y) (((x) > (y)) ? (x) : (y))
-#define min(x, y) (((x) < (y)) ? (x) : (y))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
 int levenshtein(const char* s1, const char* s2)
 {
@@ -245,7 +245,24 @@ bool canMakeSquare(char** grid, int, int*)
     return false;
 }
 
+int addedInteger(int* nums1, int n1, int* nums2, int n2)
+{
+    int min1 = 0x7FFFFFFF;
+    for (size_t i = 0; i < n1; ++i) min1 = min(min1, nums1[i]);
+    int min2 = 0x7FFFFFFF;
+    for (size_t i = 0; i < n1; ++i) min2 = min(min2, nums2[i]);
+    return min2 - min1;
+}
+
+int maxBottlesDrunk(int bs, int e)
+{
+    for (int r = bs; r >= e; bs++, r -= e++ - 1)  {}
+    return bs;
+}
+
 int main(void)
 {
+    printf("RESULT: %d\n", maxBottlesDrunk(10, 3));
+
     return 0;
 }
