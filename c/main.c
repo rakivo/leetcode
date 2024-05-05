@@ -256,7 +256,7 @@ int addedInteger(int* nums1, int n1, int* nums2, int n2)
 
 int maxBottlesDrunk(int bs, int e)
 {
-    for (int r = bs; r >= e; bs++, r -= e++ - 1)  {}
+    for (int r = bs; r >= e; bs++, r -= e++ - 1) {}
     return bs;
 }
 

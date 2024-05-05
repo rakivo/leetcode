@@ -89,7 +89,6 @@ impl TreeNode {
             right: None
         }
     }
-
 }
 
 macro_rules! build_tree_macro {
@@ -1293,6 +1292,27 @@ pub fn find_length_of_lcis(nums: Vec<i32>) -> i32 {
 
 // <=======================================================================>
 
+const VS: &[char; 5] = &['a', 'e', 'i', 'o', 'u'];
+
+// 0b00
+//   ^ vowel
+//    ^ cons
+
+pub fn is_valid(word: String) -> bool {
+    (0..=0).fold(0, |mut ret, _| {
+        if word.len() < 3 { return ret }
+        else if word.as_bytes().iter().any(|b| {
+            if VS.contains(&(*b as char).to_ascii_lowercase()) {
+                ret |= 0b10;
+            } else if b.is_ascii_alphabetic() {
+                ret |= 0b01;
+            } !b.is_ascii_alphanumeric()
+        }) { 0 } else { ret }
+    }).eq(&0b11)
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
@@ -1304,6 +1324,7 @@ macro_rules! own {
 }
 
 fn main() {
+    dbg!(is_valid(own!("AhI")));
     dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
     dbg!(can_make_square(vec![vec!['B','W','B'], vec!['W','B','W'], vec!['B','W','B']]));
     dbg!(most_frequent_even(vec![0,1,2,2,4,4,1]));
