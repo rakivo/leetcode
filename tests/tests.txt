@@ -1,0 +1,29 @@
+Leet code thingies/Solution 1/Random Words
+                        time:   [1.2473 ms 1.2511 ms 1.2549 ms]
+                        thrpt:  [15.564 KiB/s 15.611 KiB/s 15.659 KiB/s]
+                 change:
+                        time:   [+2.4034% +5.9006% +10.231%] (p = 0.00 < 0.05)
+                        thrpt:  [-9.2813% -5.5718% -2.3470%]
+                        Performance has regressed.
+Found 2 outliers among 50 measurements (4.00%)
+  1 (2.00%) low mild
+  1 (2.00%) high mild
+Leet code thingies/Solution 2/Random Words
+                        time:   [12.904 ms 13.252 ms 13.572 ms]
+                        thrpt:  [1.4391 KiB/s 1.4738 KiB/s 1.5136 KiB/s]
+                 change:
+                        time:   [-6.4175% -3.0397% +0.2319%] (p = 0.09 > 0.05)
+                        thrpt:  [-0.2314% +3.1350% +6.8575%]
+                        No change in performance detected.
+Found 1 outliers among 50 measurements (2.00%)
+  1 (2.00%) low mild
+Leet code thingies/Solution 3/Random Words
+                        time:   [18.012 ms 18.833 ms 19.588 ms]
+                        thrpt:  [1021.1   B/s 1.0371 KiB/s 1.0843 KiB/s]
+                 change:
+                        time:   [-11.818% -7.2585% -2.5162%] (p = 0.00 < 0.05)
+                        thrpt:  [+2.5812% +7.8266% +13.402%]
+                        Performance has improved.
+Found 7 outliers among 50 measurements (14.00%)
+  7 (14.00%) low mild
+

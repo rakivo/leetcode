@@ -1,3 +1,5 @@
+// Link to my leet code: https://leetcode.com/u/marktyrkba/
+
     //                               l        r       u        d
 pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
@@ -1294,21 +1296,28 @@ pub fn find_length_of_lcis(nums: Vec<i32>) -> i32 {
 
 const VS: &[char; 5] = &['a', 'e', 'i', 'o', 'u'];
 
-// 0b00
-//   ^ vowel
-//    ^ cons
-
 pub fn is_valid(word: String) -> bool {
-    (0..=0).fold(0, |mut ret, _| {
+    (0..=0).fold(0b1000011, |mut ret, _| {
         if word.len() < 3 { return ret }
-        else if word.as_bytes().iter().any(|b| {
+        if word.as_bytes().iter().any(|b| {
             if VS.contains(&(*b as char).to_ascii_lowercase()) {
-                ret |= 0b10;
+                ret &= !(1 << 1); false
             } else if b.is_ascii_alphabetic() {
-                ret |= 0b01;
-            } !b.is_ascii_alphanumeric()
+                ret |=   1 << 2; false
+            } else { !b.is_ascii_alphanumeric() }
         }) { 0 } else { ret }
-    }).eq(&0b11)
+    }).eq(&69)
+}
+
+// <=======================================================================>
+
+pub fn find_permutation_difference(s: String, t: String) -> i32 {
+    (0..=0).fold((0x45, [0x0; 26]), |(_, mut m), _| {
+        t.as_bytes().iter().enumerate().for_each(|(i, c)| m[*c as usize - 0x61] = i);
+        (s.as_bytes().iter().enumerate().fold(0, |mut ret, (i, c)| {
+            ret += m[*c as usize - 0x61].abs_diff(i); ret
+        }), m)
+    }).0 as i32
 }
 
 // <=======================================================================>
@@ -1324,6 +1333,8 @@ macro_rules! own {
 }
 
 fn main() {
+    dbg!(satisfies_conditions(vec![vec![1, 1, 1], vec![0, 0, 0]]));
+    dbg!(find_permutation_difference(own!("abc"), own!("bac")));
     dbg!(is_valid(own!("AhI")));
     dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
     dbg!(can_make_square(vec![vec!['B','W','B'], vec!['W','B','W'], vec!['B','W','B']]));
