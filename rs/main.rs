@@ -1311,12 +1311,15 @@ pub fn is_valid(word: String) -> bool {
 
 // <=======================================================================>
 
-pub fn find_permutation_difference(s: String, t: String) -> i32 {
-    (0..=0).fold((0x45, [0x0; 26]), |(_, mut m), _| {
-        t.as_bytes().iter().enumerate().for_each(|(i, c)| m[*c as usize - 0x61] = i);
-        (s.as_bytes().iter().enumerate().fold(0, |mut ret, (i, c)| {
-            ret += m[*c as usize - 0x61].abs_diff(i); ret
-        }), m)
+macro_rules! a {
+    (.|.$c: expr) => { *$c as usize - 0x61 };
+    (|..|$it: expr) => { $it.into_iter().enumerate() }
+}
+
+fn find_permutation_difference(s: String, t: String) -> i32 {
+    (0..=0).fold((0x45, [0x0; 0x1A]), |(_, mut m), _| {
+        a!(|..|t.as_bytes()).for_each(|(i, c)| m[a!(.|.c)] = i);
+        (a!(|..|s.as_bytes()).fold(0x0, |r, (i, c)| r + m[a!(.|.c)].abs_diff(i)), m)
     }).0 as i32
 }
 
@@ -1333,7 +1336,6 @@ macro_rules! own {
 }
 
 fn main() {
-    dbg!(satisfies_conditions(vec![vec![1, 1, 1], vec![0, 0, 0]]));
     dbg!(find_permutation_difference(own!("abc"), own!("bac")));
     dbg!(is_valid(own!("AhI")));
     dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
