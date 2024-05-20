@@ -1,7 +1,6 @@
 // Link to my leet code: https://leetcode.com/u/marktyrkba/
-
-    //                               l        r       u        d
 pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
+    //                               l        r       u        d
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     fn dfs(i: i32, j: i32, grid: &mut Vec<Vec<char>>, n: &i32, n0: &i32) -> bool {
     	if i < 0
@@ -72,6 +71,7 @@ pub fn insert_greatest_common_divisors(mut head: Option<Box<ListNode>>) -> Optio
 
 // <=======================================================================>
 
+use core::slice::sort::quicksort;
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -1325,6 +1325,88 @@ fn find_permutation_difference(s: String, t: String) -> i32 {
 
 // <=======================================================================>
 
+pub fn is_array_special(nums: Vec<i32>) -> bool {
+    !(0..=0).fold((false, nums.windows(2)), |(r, mut i), _| {
+        if nums.len() <= 1 { return (r, i) }
+        (i.any(|w| w[0] & 1 ^ w[1] & 1 == 0), i)
+    }).0
+}
+
+// <=======================================================================>
+
+pub fn sum_digit_differences(mut nums: Vec<i32>) -> i64 {
+    nums.iter_mut().fold([[0; 10]; 10], |mut f, x| {
+        (0..10).any(|i| {
+            f[i][*x as usize % 10] += 1;
+            *x /= 10; *x == 0
+        }); f
+    }).iter().fold((0, nums.len()), |(mut r, n), f| {
+        f.iter().for_each(|x| r += (n - x) * x); (r, n)
+    }).0 as i64 >> 1
+}
+
+// <=======================================================================>
+
+pub fn subset_xor_sum(nums: Vec<i32>) -> i32 {
+    nums.iter().fold(0x0, |ret, x| ret | x) << nums.len() - 1
+}
+
+// <=======================================================================>
+
+// codewars
+fn is_pangram(s: &str) -> bool {
+    s.chars()
+        .filter(|x| x.is_alphabetic())
+        .map(|x| x.to_ascii_lowercase())
+        .collect::<std::collections::HashSet<_>>()
+        .len()
+        .eq(&26)
+}
+
+// <=======================================================================>
+
+// codewars
+fn remove_every_other(nums: &[u8]) -> Vec<u8> {
+    nums.iter()
+        .enumerate()
+        .filter_map(|(i, x)| {
+            if i & 1 == 0 {
+                Some(*x)
+            } else { None }
+        }).collect()
+}
+
+// <=======================================================================>
+
+// codewars
+fn order(s: &str) -> String {
+    let mut cs = s
+        .split_whitespace()
+        .fold(Vec::with_capacity(100), |mut ret, x| {
+            let dx = x.chars().find(|x| x.is_digit(10)).unwrap().to_digit(10).unwrap();
+            ret.push((dx, x)); ret
+        });
+    cs.sort_unstable_by(|a, b| a.0.cmp(&b.0));
+    cs.iter().map(|(_, s)| *s).collect::<Vec<_>>().join(" ")
+}
+
+// <=======================================================================>
+
+#[allow(unused)]
+// codewars
+fn cakes(r: &HashMap<&str, u32>, a: &HashMap<&str, u32>) -> u32 {
+    r.into_iter().fold(!0, |r, (k, v)| r.min(a.get(k).unwrap_or(&0) / v))
+}
+
+// <=======================================================================>
+
+// codewars
+fn sequence_sum(s: u32, e: u32, step: u32) -> u32 {
+    (s..=e).step_by(step as usize).sum::<u32>()
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
@@ -1335,7 +1417,23 @@ macro_rules! own {
     ($str: expr) => { $str.to_owned() }
 }
 
+#[allow(unused)]
+macro_rules! map {
+    () => { HashMap::new() };
+    ($($i: ident: $a: expr), +) => {{
+        let mut map = HashMap::new();
+        $(map.insert(stringify!($i), $a);)*
+        map
+    }};
+}
+
 fn main() {
+    dbg!(sequence_sum(2, 6, 2));
+    dbg!(order("is2 Thi1s T4est 3a"));
+    dbg!(remove_every_other(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
+    dbg!(is_pangram("The quick, brown fox jumps over the lazy dog!"));
+    dbg!(sum_digit_differences(vec![13,23,12]));
+    dbg!(is_array_special(vec![2,1,4]));
     dbg!(find_permutation_difference(own!("abc"), own!("bac")));
     dbg!(is_valid(own!("AhI")));
     dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
