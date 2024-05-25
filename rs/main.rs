@@ -3,7 +3,7 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     //                               l        r       u        d
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     fn dfs(i: i32, j: i32, grid: &mut Vec<Vec<char>>, n: &i32, n0: &i32) -> bool {
-    	if i < 0
+        if i < 0
         || j < 0
         || i >= *n
         || j >= *n0
@@ -71,7 +71,6 @@ pub fn insert_greatest_common_divisors(mut head: Option<Box<ListNode>>) -> Optio
 
 // <=======================================================================>
 
-use core::slice::sort::quicksort;
 use std::rc::Rc;
 use std::cell::RefCell;
 
@@ -1407,6 +1406,63 @@ fn sequence_sum(s: u32, e: u32, step: u32) -> u32 {
 
 // <=======================================================================>
 
+pub fn subtract_product_and_sum(mut n: i32) -> i32 {
+    let (mut sum, mut prod) = (0, 1);
+    while n > 0 {
+        prod *= n % 10;
+        sum += n % 10;
+        n /= 10;
+    }
+    prod - sum
+}
+
+// <=======================================================================>
+
+pub fn duplicate_numbers_xor(nums: Vec<i32>) -> i32 {
+    nums.iter()
+        .fold(HashMap::with_capacity(50), |mut map, x| {
+            *map.entry(x).or_insert(0) += 1; map
+        }).iter()
+        .filter(|(_, x)| x.eq(&&2))
+        .fold(0x0, |ret, (x, _)| ret ^ *x)
+}
+
+pub fn occurrences_of_element(nums: Vec::<i32>, queries: Vec::<i32>, x: i32) -> Vec::<i32> {
+    (0..=0).fold(nums.iter()
+                 .enumerate()
+                 .filter(|(_, n)| **n == x)
+                 .map(|(i, _)| i as i32)
+                 .collect::<Vec<_>>(),
+    |occs, _| {
+        queries.iter()
+            .map(|q| {
+                if *q as usize <= occs.len() {
+                    occs[*q as usize - 1]
+                } else { -1 }
+            }).collect::<Vec<_>>()
+    })
+}
+
+pub fn query_results(_: i32, qs: Vec::<Vec::<i32>>) -> Vec::<i32> {
+    qs
+    .iter()
+    .fold((HashMap::<i32, i32>::new(), HashMap::<i32, i32>::new(), Vec::new(), 0),
+    |(mut bcs, mut ccs, mut ret, mut dcc), q| {
+        if let Some(c) = ccs.get_mut(bcs.get(&q[0]).unwrap_or(&-0xAAA)) {
+            *c -= 1;
+            if *c == 0 { dcc -= 1; }
+        }
+        bcs.insert(q[0], q[1]);
+        let c = ccs.entry(q[1]).or_insert(0);
+        *c += 1;
+        if *c == 1 { dcc += 1; }
+        ret.push(dcc);
+        (bcs, ccs, ret, dcc)
+    }).2
+}
+
+// <=======================================================================>
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
@@ -1428,6 +1484,7 @@ macro_rules! map {
 }
 
 fn main() {
+    dbg!(subtract_product_and_sum(234));
     dbg!(sequence_sum(2, 6, 2));
     dbg!(order("is2 Thi1s T4est 3a"));
     dbg!(remove_every_other(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
