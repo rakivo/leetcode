@@ -3,18 +3,14 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
     //                               l        r       u        d
     const DIRS: [(i32, i32); 4] = [(0, -1), (0, 1), (1, 0), (-1, 0)];
     fn dfs(i: i32, j: i32, grid: &mut Vec<Vec<char>>, n: &i32, n0: &i32) -> bool {
-        if i < 0
-        || j < 0
-        || i >= *n
-        || j >= *n0
-        || grid[i as usize][j as usize] == '0'
-        {
+        if i < 0 || j < 0 || i >= *n || j >= *n0 || grid[i as usize][j as usize] == '0' {
             return false;
         }
         grid[i as usize][j as usize] = '0';
         for (di, dj) in DIRS {
             dfs(i + di, j + dj, grid, n, n0);
-        } true
+        }
+        true
     }
     let n = grid.len() as i32;
     let n0 = grid[0].len() as i32;
@@ -26,7 +22,8 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
                 ans += 1;
             }
         }
-    } ans
+    }
+    ans
 }
 
 // <=======================================================================>
@@ -34,24 +31,24 @@ pub fn num_islands(mut grid: Vec<Vec<char>>) -> i32 {
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
     pub val: i32,
-    pub next: Option<Box<ListNode>>
+    pub next: Option<Box<ListNode>>,
 }
 
 impl ListNode {
     #[inline]
     fn new(val: i32) -> Self {
-            ListNode {
-            next: None,
-            val
-        }
+        ListNode { next: None, val }
     }
 }
 
 fn gcd(mut a: i32, mut b: i32) -> i32 {
     while b != 0 {
-        if b < a { std::mem::swap(&mut b, &mut a); }
+        if b < a {
+            std::mem::swap(&mut b, &mut a);
+        }
         b %= a;
-    } a
+    }
+    a
 }
 
 pub fn insert_greatest_common_divisors(mut head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
@@ -64,15 +61,17 @@ pub fn insert_greatest_common_divisors(mut head: Option<Box<ListNode>>) -> Optio
 
             node.next = Some(new_node);
             current = &mut node.next.as_mut().unwrap().next;
-        } else { break; }
+        } else {
+            break;
+        }
     }
     head
 }
 
 // <=======================================================================>
 
-use std::rc::Rc;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
@@ -87,7 +86,7 @@ impl TreeNode {
         TreeNode {
             val,
             left: None,
-            right: None
+            right: None,
         }
     }
 }
@@ -104,13 +103,11 @@ macro_rules! build_tree_macro {
 pub fn construct_maximum_binary_tree(nums: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
     match nums.iter().enumerate().max_by_key(|&(_, val)| *val) {
         None => None,
-        Some((idx, val)) => {
-            Some(Rc::new(RefCell::new(TreeNode {
-                val: *val,
-                left: build_tree_macro!(&nums[..idx]),
-                right: build_tree_macro!(&nums[idx + 1..]),
-            })))
-        }
+        Some((idx, val)) => Some(Rc::new(RefCell::new(TreeNode {
+            val: *val,
+            left: build_tree_macro!(&nums[..idx]),
+            right: build_tree_macro!(&nums[idx + 1..]),
+        }))),
     }
 }
 
@@ -128,17 +125,17 @@ struct RandomizedSet {
     n: usize,
     state: usize,
     map: HashMap<i32, usize>,
-    values: [Option<i32>; 5000]
+    values: [Option<i32>; 5000],
 }
 
 #[allow(unused)]
 impl RandomizedSet {
-    fn new() -> RandomizedSet  {
+    fn new() -> RandomizedSet {
         RandomizedSet {
             n: 0,
             state: 1488,
             map: HashMap::with_capacity(200000),
-            values: [None; 5000]
+            values: [None; 5000],
         }
     }
 
@@ -162,14 +159,16 @@ impl RandomizedSet {
             self.map.remove(&val);
             self.n -= 1;
             true
-        } else { false }
+        } else {
+            false
+        }
     }
 
     fn get_random(&mut self) -> i32 {
         self.state ^= self.state << 13;
         self.state ^= self.state >> 7;
         self.state ^= self.state << 17;
-        self.values[self.state %  self.n].unwrap()
+        self.values[self.state % self.n].unwrap()
     }
 }
 
@@ -181,7 +180,7 @@ struct RandomizedCollection {
     map: HashMap<i32, (HashSet<usize>, usize)>,
     values: [Option<i32>; 10000],
     state: usize,
-    n: usize
+    n: usize,
 }
 
 #[allow(unused)]
@@ -191,7 +190,7 @@ impl RandomizedCollection {
             map: HashMap::new(),
             values: [None; 10000],
             state: 1488,
-            n: 0
+            n: 0,
         }
     }
 
@@ -208,8 +207,8 @@ impl RandomizedCollection {
     fn remove(&mut self, val: i32) -> bool {
         if let Some((set, n)) = self.map.get_mut(&val) {
             *n -= 1;
-            let i    = *set.iter().next().unwrap();
-            let end  = self.n - 1;
+            let i = *set.iter().next().unwrap();
+            let end = self.n - 1;
 
             let curr = self.values[i].unwrap();
             let last = self.values[end].unwrap();
@@ -226,15 +225,18 @@ impl RandomizedCollection {
             self.n -= 1;
             if self.map.get_mut(&curr).unwrap().1 == 0 {
                 self.map.remove(&curr);
-            } true
-        } else { false }
+            }
+            true
+        } else {
+            false
+        }
     }
 
     fn get_random(&mut self) -> i32 {
         self.state ^= self.state << 13;
         self.state ^= self.state >> 7;
         self.state ^= self.state << 17;
-        self.values[self.state %  self.n].unwrap()
+        self.values[self.state % self.n].unwrap()
     }
 }
 
@@ -255,7 +257,8 @@ pub fn modified_matrix(mut mat: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
                 mat[i][j] = maxs[j];
             }
         }
-    } mat
+    }
+    mat
 }
 
 // <=======================================================================>
@@ -270,18 +273,22 @@ fn meeting_rooms(mut times: Vec<Vec<u32>>) -> bool {
 // <=======================================================================>
 
 pub fn count_prefix_suffix_pairs(words: Vec<String>) -> i64 {
-    words.iter().fold((0, HashMap::<&str, (i64, usize)>::new()), |(mut acc, mut map), w| {
-        let n = w.len();
-        map.iter().for_each(|(k, (v, len))| {
-            if *len <= n
-            && w.starts_with(k)
-            && w.ends_with(k) {
-                acc += v;
-            }
-        });
-        map.entry(w.as_str()).or_insert_with(|| (0, n)).0 += 1;
-        (acc, map)
-    }).0
+    words
+        .iter()
+        .fold(
+            (0, HashMap::<&str, (i64, usize)>::new()),
+            |(mut acc, mut map), w| {
+                let n = w.len();
+                map.iter().for_each(|(k, (v, len))| {
+                    if *len <= n && w.starts_with(k) && w.ends_with(k) {
+                        acc += v;
+                    }
+                });
+                map.entry(w.as_str()).or_insert_with(|| (0, n)).0 += 1;
+                (acc, map)
+            },
+        )
+        .0
 }
 
 // <=======================================================================>
@@ -298,9 +305,8 @@ pub fn map_product_difference(mut nums: Vec<i32>) -> i32 {
 pub fn count_consistent_strings(allowed: String, words: Vec<String>) -> i32 {
     words
         .iter()
-        .filter(|w|
-                w.chars().all(|ch| allowed.contains(ch))
-        ).count() as i32
+        .filter(|w| w.chars().all(|ch| allowed.contains(ch)))
+        .count() as i32
 }
 
 // <=======================================================================>
@@ -330,15 +336,23 @@ pub fn result_array1(nums: Vec<i32>) -> Vec<i32> {
 }
 
 pub fn result_arrayfold(nums: Vec<i32>) -> Vec<i32> {
-    let (mut arr1, arr2) = nums.iter().skip(2).fold(((vec![nums[0]], vec![nums[1]]), (0, 0)),
-        |((mut arr1, mut arr2), (mut n1, mut n2)), &i|
-        {
-            if arr1[n1] > arr2[n2] {
-                arr1.push(i); n1 += 1;
-            } else {
-                arr2.push(i); n2 += 1;
-            } ((arr1, arr2), (n1, n2))
-        }).0;
+    let (mut arr1, arr2) = nums
+        .iter()
+        .skip(2)
+        .fold(
+            ((vec![nums[0]], vec![nums[1]]), (0, 0)),
+            |((mut arr1, mut arr2), (mut n1, mut n2)), &i| {
+                if arr1[n1] > arr2[n2] {
+                    arr1.push(i);
+                    n1 += 1;
+                } else {
+                    arr2.push(i);
+                    n2 += 1;
+                }
+                ((arr1, arr2), (n1, n2))
+            },
+        )
+        .0;
     arr1.extend(arr2);
     arr1
 }
@@ -356,22 +370,36 @@ fn find_and_replace_pattern(words: Vec<String>, pattern: String) -> Vec<String> 
 
         for i in 0..ch_word.len() {
             if let Some(&prevw) = p2wmap.get(&ch_patt[i]) {
-                if prevw != ch_word[i] { return false; }
-            } else { p2wmap.insert(ch_patt[i], ch_word[i]); }
+                if prevw != ch_word[i] {
+                    return false;
+                }
+            } else {
+                p2wmap.insert(ch_patt[i], ch_word[i]);
+            }
 
             if let Some(&prevp) = w2pmap.get(&ch_word[i]) {
-                if prevp != ch_patt[i] { return false; }
-            } else { w2pmap.insert(ch_word[i], ch_patt[i]); }
-        } true
+                if prevp != ch_patt[i] {
+                    return false;
+                }
+            } else {
+                w2pmap.insert(ch_word[i], ch_patt[i]);
+            }
+        }
+        true
     }
 
-    words.into_iter().filter(|word| is_match(word, &pattern)).collect()
+    words
+        .into_iter()
+        .filter(|word| is_match(word, &pattern))
+        .collect()
 }
 
 // <=======================================================================>
 
 pub fn can_be_typed_words(text: String, bale: String) -> i32 {
-    text.split_whitespace().filter(|w| bale.chars().all(|c| !w.contains(c))).count() as i32
+    text.split_whitespace()
+        .filter(|w| bale.chars().all(|c| !w.contains(c)))
+        .count() as i32
 }
 
 // <=======================================================================>
@@ -388,7 +416,8 @@ fn gcd1(mut a: u64, mut b: u64) -> u64 {
         let temp = b;
         b = a % b;
         a = temp;
-    } a
+    }
+    a
 }
 
 #[allow(unused)]
@@ -399,15 +428,15 @@ fn solution(arr: &[u64]) -> u128 {
 // <=======================================================================>
 
 struct FT {
-    tree:  Vec<usize>,
-    treen: i32
+    tree: Vec<usize>,
+    treen: i32,
 }
 
 impl FT {
     fn new(max: usize) -> FT {
         FT {
-            tree:  vec![0; max + 2],
-            treen: (max + 2) as i32
+            tree: vec![0; max + 2],
+            treen: (max + 2) as i32,
         }
     }
 
@@ -423,13 +452,15 @@ impl FT {
         while pos > 0 {
             ans += self.tree[pos as usize];
             pos -= pos & -pos;
-        } ans
+        }
+        ans
     }
 }
 
 macro_rules! push {
     ($arr: ident <- $i: expr, $n: ident++, $ft: ident <- $id: ident) => {
-        $arr.push($i); $n += 1;
+        $arr.push($i);
+        $n += 1;
         $ft.update($id, 1);
     };
 }
@@ -438,12 +469,14 @@ pub fn result_array(nums: Vec<i32>) -> Vec<i32> {
     let n = nums.len();
 
     let (mut arr1, mut arr2) = (Vec::with_capacity(n), Vec::with_capacity(n));
-    let (mut n1,   mut n2  ) = (1, 1);
-    let (mut map,  mut mapn) = (HashMap::with_capacity(n), 0);
+    let (mut n1, mut n2) = (1, 1);
+    let (mut map, mut mapn) = (HashMap::with_capacity(n), 0);
 
-    let mut sorted = nums.clone(); sorted.sort_unstable();
+    let mut sorted = nums.clone();
+    sorted.sort_unstable();
     sorted.iter().for_each(|i| {
-        map.entry(i).or_insert(mapn + 1); mapn += 1;
+        map.entry(i).or_insert(mapn + 1);
+        mapn += 1;
     });
 
     let (mut ft1, mut ft2) = (FT::new(mapn as usize), FT::new(mapn as usize));
@@ -453,7 +486,7 @@ pub fn result_array(nums: Vec<i32>) -> Vec<i32> {
     arr2.push(nums[1]);
     ft2.update(*map.get(&nums[1]).unwrap(), 1);
     nums.iter().skip(2).for_each(|&i| {
-        let id  = *map.get(&i).unwrap();
+        let id = *map.get(&i).unwrap();
         let gc1 = n1 - ft1.sum(id);
         let gc2 = n2 - ft2.sum(id);
         if gc1 > gc2 {
@@ -502,26 +535,26 @@ pub fn beautiful_substrings(s: String, k: i32) -> i32 {
                 t += 1;
             }
         }
-    } t
+    }
+    t
 }
 
 // <=======================================================================>
 
 pub fn sum_of_encrypted_int(n: Vec<i32>) -> i32 {
-    n
-    .iter()
-    .map(|&x| {
-        let mut len = 0;
-        let mut max = 0;
-        let mut y   = x;
-        while y > 0 {
-            max = std::cmp::max(y % 10, max);
-            y /= 10;
-            len += 1;
-        }
-        max * (10i32.pow(len) - 1) / 9
-    })
-    .sum()
+    n.iter()
+        .map(|&x| {
+            let mut len = 0;
+            let mut max = 0;
+            let mut y = x;
+            while y > 0 {
+                max = std::cmp::max(y % 10, max);
+                y /= 10;
+                len += 1;
+            }
+            max * (10i32.pow(len) - 1) / 9
+        })
+        .sum()
 }
 
 // <=======================================================================>
@@ -533,7 +566,8 @@ pub fn is_substring_present(s: String) -> bool {
         if x.contains(&s[i..i + 2]) {
             return true;
         }
-    } false
+    }
+    false
 }
 
 // <=======================================================================>
@@ -550,15 +584,13 @@ pub fn find_minimum_operations(s1: String, s2: String, s3: String) -> i32 {
     let (x, y, z) = (s1.len(), s2.len(), s3.len());
     let (mut i, m) = (0, x.min(y).min(z));
 
-    while i < m
-    && &s1[i..=i] == &s2[i..=i]
-    && &s2[i..=i] == &s3[i..=i] {
+    while i < m && &s1[i..=i] == &s2[i..=i] && &s2[i..=i] == &s3[i..=i] {
         i += 1
     }
 
     match i {
         0 => -1,
-        _ => (x + y + z - 3 * i) as i32
+        _ => (x + y + z - 3 * i) as i32,
     }
 }
 
@@ -577,11 +609,14 @@ pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
     arra.sort_unstable();
     let m = arra.windows(2).map(|p| p[1] - p[0]).min().unwrap();
     arra.windows(2)
-        .filter_map(|p| if p[1] - p[0] == m {
-            Some(vec![p[0], p[1]])
-        } else {
-            None
-        }).collect::<Vec<_>>()
+        .filter_map(|p| {
+            if p[1] - p[0] == m {
+                Some(vec![p[0], p[1]])
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>()
 }
 
 // <=======================================================================>
@@ -589,13 +624,17 @@ pub fn minimum_abs_difference(mut arra: Vec<i32>) -> Vec<Vec<i32>> {
 // mine (not posted)
 pub fn find_max_k(mut nums: Vec<i32>) -> i32 {
     nums.sort_unstable();
-    nums.iter().rev().filter_map(|i| {
-         if nums.binary_search(&-i).is_ok() {
-            Some(*i)
-        } else {
-            None
-        }
-    }).max().unwrap_or(-1)
+    nums.iter()
+        .rev()
+        .filter_map(|i| {
+            if nums.binary_search(&-i).is_ok() {
+                Some(*i)
+            } else {
+                None
+            }
+        })
+        .max()
+        .unwrap_or(-1)
 }
 
 // <=======================================================================>
@@ -611,7 +650,8 @@ pub fn search(nums: Vec<i32>, tar: i32) -> i32 {
         if let Some(idx) = nums[..at].binary_search(&tar).ok() {
             return idx as i32;
         }
-    } -1
+    }
+    -1
 }
 
 // <=======================================================================>
@@ -627,15 +667,21 @@ pub fn minimum_deletions(word: String, k: i32) -> i32 {
 
     for &x in map.iter() {
         let high = x + k;
-        ans = ans.min
-        (
-            map.iter().map(|&y| {
-                if y > high   { y - high }
-                else if y < x { y }
-                else          { 0 }
-            }).sum()
+        ans = ans.min(
+            map.iter()
+                .map(|&y| {
+                    if y > high {
+                        y - high
+                    } else if y < x {
+                        y
+                    } else {
+                        0
+                    }
+                })
+                .sum(),
         );
-    } ans
+    }
+    ans
 }
 
 // <=======================================================================>
@@ -681,20 +727,22 @@ use std::collections::HashMap;
 // mine: https://leetcode.com/problems/maximum-length-substring-with-two-occurrences/solutions/4919093/0ms-one-liner-beats-100-spaces-runtimes-the-fastest-in-the-entire-world-btw-one-liner-xd
 #[allow(unused)]
 fn maximum_length_substring(s: String) -> i32 {
-    s
-    .chars()
-    .enumerate()
-    .fold((std::collections::HashMap::<u8, usize>::new(),
-           0, 0), |(mut f, a, mut j), (i, c)|
-    {
-        *f.entry(c as u8).or_insert(0) += 1;
-        while j < i && f[&(c as u8)] > 2 {
-            if let Some(cnt) = f.get_mut(&s.as_bytes()[j]) {
-                *cnt -= 1;
-            } j += 1;
-        }
-        (f, a.max(i - j + 1), j)
-    }).1 as i32
+    s.chars()
+        .enumerate()
+        .fold(
+            (std::collections::HashMap::<u8, usize>::new(), 0, 0),
+            |(mut f, a, mut j), (i, c)| {
+                *f.entry(c as u8).or_insert(0) += 1;
+                while j < i && f[&(c as u8)] > 2 {
+                    if let Some(cnt) = f.get_mut(&s.as_bytes()[j]) {
+                        *cnt -= 1;
+                    }
+                    j += 1;
+                }
+                (f, a.max(i - j + 1), j)
+            },
+        )
+        .1 as i32
 }
 
 // <=======================================================================>
@@ -703,9 +751,13 @@ fn maximum_length_substring(s: String) -> i32 {
 pub fn return_to_boundary_count(nums: Vec<i32>) -> i32 {
     nums.iter()
         .fold((0, 0), |(mut r, mut c), i| {
-            c += i; if c == 0 { r += 1; }
+            c += i;
+            if c == 0 {
+                r += 1;
+            }
             (r, c)
-        }).0
+        })
+        .0
 }
 
 // <=======================================================================>
@@ -715,11 +767,15 @@ pub fn lexical_order(n: i32) -> Vec<i32> {
     let mut res: Vec<i32> = Vec::new();
 
     fn dfs(cur: i32, n: i32, res: &mut Vec<i32>) {
-        if cur > n { return }
+        if cur > n {
+            return;
+        }
 
         res.push(cur);
         dfs(cur * 10, n, res);
-        if cur % 10 != 9 { dfs(cur + 1, n, res); }
+        if cur % 10 != 9 {
+            dfs(cur + 1, n, res);
+        }
     }
 
     dfs(1, n, &mut res);
@@ -732,50 +788,71 @@ pub fn decrypt(code: Vec<i32>, k: i32) -> Vec<i32> {
     let len = code.len() as i32;
     match k {
         0 => vec![0; len as usize],
-        _ => if k < 0 { (0..len).map(|index| (index + k..index).map(|i| code[i.rem_euclid(len) as usize]).sum()).collect() }
-             else { (0..len).map(|index| (index + 1..=index + k).map(|i| code[i.rem_euclid(len) as usize]).sum()).collect() }
+        _ => {
+            if k < 0 {
+                (0..len)
+                    .map(|index| {
+                        (index + k..index)
+                            .map(|i| code[i.rem_euclid(len) as usize])
+                            .sum()
+                    })
+                    .collect()
+            } else {
+                (0..len)
+                    .map(|index| {
+                        (index + 1..=index + k)
+                            .map(|i| code[i.rem_euclid(len) as usize])
+                            .sum()
+                    })
+                    .collect()
+            }
+        }
     }
 }
 
 // <=======================================================================>
 
 macro_rules! c_ {
-    ($l: ident, $r: ident, $i: ident) => { ($l.is_none() || $l.unwrap() + 1 < $i) && ($r.is_none() || $r.unwrap() - 1 > $i) };
+    ($l: ident, $r: ident, $i: ident) => {
+        ($l.is_none() || $l.unwrap() + 1 < $i) && ($r.is_none() || $r.unwrap() - 1 > $i)
+    };
 }
 
 pub fn find_lonely(mut n: Vec<i32>) -> Vec<i32> {
     n.sort_unstable();
-    n
-    .iter()
-    .enumerate()
-    .fold(Vec::new(), |mut ret, (idx, &i)| {
+    n.iter().enumerate().fold(Vec::new(), |mut ret, (idx, &i)| {
         let l = n.get(idx - 1);
         let r = n.get(idx + 1);
         if c_!(l, r, i) {
             ret.push(i);
-        } ret
+        }
+        ret
     })
 }
 
 // <=======================================================================>
 
 macro_rules! c {
-    ($m: ident, $i: expr) => { $m[$i].eq(&1) && $m[$i - 1].eq(&0) && $m[$i + 1].eq(&0) };
+    ($m: ident, $i: expr) => {
+        $m[$i].eq(&1) && $m[$i - 1].eq(&0) && $m[$i + 1].eq(&0)
+    };
 }
 
 macro_rules! p {
-    ($m: ident, $n: ident) => { $n.iter().for_each(|&i| $m[i as usize + 1] += 1) };
+    ($m: ident, $n: ident) => {
+        $n.iter().for_each(|&i| $m[i as usize + 1] += 1)
+    };
 }
 
 pub fn find_lonely_(n: Vec<i32>) -> Vec<i32> {
-    let mut m = [0; 7 + 10usize.pow(6)]; p!(m, n);
-    n
-    .iter()
-    .fold(Vec::new(), |mut ret, &i| {
+    let mut m = [0; 7 + 10usize.pow(6)];
+    p!(m, n);
+    n.iter().fold(Vec::new(), |mut ret, &i| {
         let i_ = i as usize + 1;
         if c!(m, i_) {
             ret.push(i);
-        } ret
+        }
+        ret
     })
 }
 
@@ -784,38 +861,56 @@ pub fn find_lonely_(n: Vec<i32>) -> Vec<i32> {
 macro_rules! c__ {
     ($ret: expr) => {{
         let r = $ret;
-        if r.eq(&i32::MAX) { -1 } else { r }
+        if r.eq(&i32::MAX) {
+            -1
+        } else {
+            r
+        }
     }};
 }
 
 pub fn minimum_subarray_length(n: Vec<i32>, k: i32) -> i32 {
-    c__!(n
-    .iter()
-    .enumerate()
-    .fold((0, 0, i32::MAX, [0; 32]),
-          |(mut i, mut t, mut ret, mut bits), (j, nj)|
-          {
-              t |= nj;
-              (0..32).rev().for_each(|b| bits[b] += (nj >> b) & 1);
-              while i <= j && t >= k {
-                  ret = ret.min((j - i + 1) as i32);
-                  (0..32).rev().for_each(|b| {
-                      bits[b] -= (n[i] >> b) & 1;
-                      if bits[b].eq(&0) { t &= !(1 << b); }
-                  }); i += 1;
-              } (i, t, ret, bits)
-          }).2)
+    c__!(
+        n.iter()
+            .enumerate()
+            .fold(
+                (0, 0, i32::MAX, [0; 32]),
+                |(mut i, mut t, mut ret, mut bits), (j, nj)| {
+                    t |= nj;
+                    (0..32).rev().for_each(|b| bits[b] += (nj >> b) & 1);
+                    while i <= j && t >= k {
+                        ret = ret.min((j - i + 1) as i32);
+                        (0..32).rev().for_each(|b| {
+                            bits[b] -= (n[i] >> b) & 1;
+                            if bits[b].eq(&0) {
+                                t &= !(1 << b);
+                            }
+                        });
+                        i += 1;
+                    }
+                    (i, t, ret, bits)
+                }
+            )
+            .2
+    )
 }
 
 // <=======================================================================>
 
 pub fn sum_of_the_digits_of_harshad_number(x: i32) -> i32 {
     fn digits(x: &i32) -> i32 {
-        if *x < 10 { *x }
-        else { x % 10 + digits(&(x / 10)) }
+        if *x < 10 {
+            *x
+        } else {
+            x % 10 + digits(&(x / 10))
+        }
     }
     let s = digits(&x);
-    if (x % s).eq(&0) { s } else { -1 }
+    if (x % s).eq(&0) {
+        s
+    } else {
+        -1
+    }
 }
 
 // <=======================================================================>
@@ -824,28 +919,35 @@ macro_rules! bin {
     ($n: ident, $ko: expr, $t: ident, $k: ident, $i: ident, $ni: expr) => {
         match $n[$ko..].binary_search_by_key(&($t - *$ni), |&(_, nj)| *nj) {
             Ok(ok) => Some(vec![*$i as i32, $n[ok + $k + 1].0 as i32]),
-            Err(_) => None
+            Err(_) => None,
         }
     };
 }
 
-pub fn two_sum(n: Vec<i32>, t: i32) -> Vec<i32>  {
+pub fn two_sum(n: Vec<i32>, t: i32) -> Vec<i32> {
     let mut n = n.iter().enumerate().collect::<Vec<_>>();
     n.sort_unstable_by_key(|&(_, x)| x);
-    n
-    .iter()
-    .enumerate()
-    .filter_map(|(k, (i, ni))| bin!(n, k + 1, t, k, i, ni))
-    .next()
-    .unwrap_or(Vec::new())
+    n.iter()
+        .enumerate()
+        .filter_map(|(k, (i, ni))| bin!(n, k + 1, t, k, i, ni))
+        .next()
+        .unwrap_or(Vec::new())
 }
 
 // <=======================================================================>
 
 pub fn level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
-    fn traverse(root: &Option<&Rc<RefCell<TreeNode>>>, ret: &mut Vec<Vec<i32>>, n: &mut usize, lvl: &usize) {
+    fn traverse(
+        root: &Option<&Rc<RefCell<TreeNode>>>,
+        ret: &mut Vec<Vec<i32>>,
+        n: &mut usize,
+        lvl: &usize,
+    ) {
         if let Some(node) = root {
-            if n.eq(&lvl) { ret.push(Vec::new()); *n += 1; }
+            if n.eq(&lvl) {
+                ret.push(Vec::new());
+                *n += 1;
+            }
             ret[*lvl].push(node.borrow().val);
             traverse(&node.borrow().left.as_ref(), ret, n, &(lvl + 1));
             traverse(&node.borrow().right.as_ref(), ret, n, &(lvl + 1));
@@ -860,28 +962,39 @@ pub fn level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
 
 macro_rules! gm {
     ($ws: ident, $n: ident) => {
-        $ws.iter().map(|w| {$n += 1; w.as_bytes().iter().fold((0, 0), |(acc, len), x| (acc | 1 << (x - 'a' as u8), len + 1))}).collect::<Vec<_>>()
+        $ws.iter()
+            .map(|w| {
+                $n += 1;
+                w.as_bytes().iter().fold((0, 0), |(acc, len), x| {
+                    (acc | 1 << (x - 'a' as u8), len + 1)
+                })
+            })
+            .collect::<Vec<_>>()
     };
 }
 
-pub fn max_product(ws: Vec::<String>) -> i32 {
+pub fn max_product(ws: Vec<String>) -> i32 {
     let (mut n, mut m) = (0, 0);
     let mp = gm!(ws, n);
-    
+
     for i in 0..n - 1 {
         for j in i + 1..n {
             if (mp[i].0 & mp[j].0).eq(&0) {
                 m = m.max(mp[i].1 * mp[j].1)
             }
         }
-    } m
+    }
+    m
 }
 
 // <=======================================================================>
 
 pub fn longest_monotonic_subarray(nums: Vec<i32>) -> i32 {
     nums.windows(2)
-        .fold((1, 1, 1), |(inc, dec, max), w| sv(&w[1], &w[0], &inc, &dec, &max)).2
+        .fold((1, 1, 1), |(inc, dec, max), w| {
+            sv(&w[1], &w[0], &inc, &dec, &max)
+        })
+        .2
 }
 
 fn sv(ni: &i32, nj: &i32, inc: &i32, dec: &i32, max: &i32) -> (i32, i32, i32) {
@@ -906,7 +1019,8 @@ pub fn longest_monotonic_subarray_basic(nums: Vec<i32>) -> i32 {
             } else {
                 (1, 1, max.max(1))
             }
-        }).2
+        })
+        .2
 }
 
 // <=======================================================================>
@@ -914,19 +1028,21 @@ pub fn longest_monotonic_subarray_basic(nums: Vec<i32>) -> i32 {
 type TL = Rc<RefCell<TreeNode>>;
 
 pub fn kth_smallest(root: Option<TL>, k: i32) -> i32 {
-    (0..=0).fold((Vec::new(), 0xFFFFFFF), |(mut mins, _ ), _| {
-        fn traverse__(root: &Option<&TL>, k: &i32, mins: &mut Vec<i32>) {
-            if let Some(node) = root {
-                mins.push(node.borrow().val);
-                traverse__(&node.borrow().left.as_ref(), &k, mins);
-                traverse__(&node.borrow().right.as_ref(), &k, mins);
+    (0..=0)
+        .fold((Vec::new(), 0xFFFFFFF), |(mut mins, _), _| {
+            fn traverse__(root: &Option<&TL>, k: &i32, mins: &mut Vec<i32>) {
+                if let Some(node) = root {
+                    mins.push(node.borrow().val);
+                    traverse__(&node.borrow().left.as_ref(), &k, mins);
+                    traverse__(&node.borrow().right.as_ref(), &k, mins);
+                }
             }
-        }
-        traverse__(&root.as_ref(), &k, &mut mins);
-        mins.sort_unstable();
-        let kmin = mins[k as usize - 1];
-        (mins, kmin)
-    }).1
+            traverse__(&root.as_ref(), &k, &mut mins);
+            mins.sort_unstable();
+            let kmin = mins[k as usize - 1];
+            (mins, kmin)
+        })
+        .1
 }
 
 // <=======================================================================>
@@ -934,7 +1050,7 @@ pub fn kth_smallest(root: Option<TL>, k: i32) -> i32 {
 #[allow(unused)]
 struct Bank {
     bals: Vec<i64>,
-    size: i32
+    size: i32,
 }
 
 #[allow(unused)]
@@ -961,41 +1077,42 @@ impl Bank {
     }
 
     fn transfer(&mut self, acc1: i32, acc2: i32, money: i64) -> bool {
-        if self.check_bounds(&acc1, &acc2)
-        && self.get_bal(&acc1) >= money
-        {
+        if self.check_bounds(&acc1, &acc2) && self.get_bal(&acc1) >= money {
             *self.get_mut_bal(&acc1) -= money;
             *self.get_mut_bal(&acc2) += money;
             true
-        } else { false }
+        } else {
+            false
+        }
     }
 
     fn deposit(&mut self, acc: i32, money: i64) -> bool {
         if self.check_bounds(&acc, &0) {
             *self.get_mut_bal(&acc) += money;
             true
-        } else { false }
+        } else {
+            false
+        }
     }
 
     fn withdraw(&mut self, acc: i32, money: i64) -> bool {
-        if self.check_bounds(&acc, &0)
-        && self.get_bal(&acc) >= money
-        {
+        if self.check_bounds(&acc, &0) && self.get_bal(&acc) >= money {
             *self.get_mut_bal(&acc) -= money;
             true
-        } else { false }
+        } else {
+            false
+        }
     }
 }
 
 // <=======================================================================>
 
 pub fn score_of_string(s: String) -> i32 {
-    s
-    .chars()
-    .collect::<Vec<_>>()
-    .windows(2)
-    .map(|w| (w[1] as i32 - w[0] as i32).abs())
-    .sum::<i32>()
+    s.chars()
+        .collect::<Vec<_>>()
+        .windows(2)
+        .map(|w| (w[1] as i32 - w[0] as i32).abs())
+        .sum::<i32>()
 }
 
 // <=======================================================================>
@@ -1010,7 +1127,8 @@ pub fn min_rectangles_to_cover_points(mut pts: Vec<Vec<i32>>, w: i32) -> i32 {
                 } else {
                     (ret, next)
                 }
-            }).0        
+            })
+            .0
     }) as i32
 }
 
@@ -1025,7 +1143,8 @@ fn mod_exp(mut base: u64, mut exp: u64, modu: u64) -> u64 {
         }
         exp >>= 1;
         base = (base * base) % modu;
-    } ret
+    }
+    ret
 }
 
 // https://en.wikipedia.org/wiki/Xorshift
@@ -1051,62 +1170,91 @@ fn fermat(n: u64, mut state: u64) -> bool {
         if mod_exp(a, n - 1, n) != 1 {
             return false;
         }
-    } true
+    }
+    true
 }
 
 pub fn maximum_prime_difference(nums: Vec<i32>) -> i32 {
-    ((0..nums.len()).find(|&i| fermat(nums[i] as u64, XORSHIFT_STATE)).unwrap() as i32)
-        .abs_diff((0..nums.len()).rev().find(|&i| fermat(nums[i] as u64, XORSHIFT_STATE)).unwrap() as i32) as i32
+    ((0..nums.len())
+        .find(|&i| fermat(nums[i] as u64, XORSHIFT_STATE))
+        .unwrap() as i32)
+        .abs_diff(
+            (0..nums.len())
+                .rev()
+                .find(|&i| fermat(nums[i] as u64, XORSHIFT_STATE))
+                .unwrap() as i32,
+        ) as i32
 }
 
 // <=======================================================================>
 
-const PRIMES: [bool; 101] = [false, false, true, true, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, true, false, false, false, false, false, true, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false];
+const PRIMES: [bool; 101] = [
+    false, false, true, true, false, true, false, true, false, false, false, true, false, true,
+    false, false, false, true, false, true, false, false, false, true, false, false, false, false,
+    false, true, false, true, false, false, false, false, false, true, false, false, false, true,
+    false, true, false, false, false, true, false, false, false, false, false, true, false, false,
+    false, false, false, true, false, true, false, false, false, false, false, true, false, false,
+    false, true, false, true, false, false, false, false, false, true, false, false, false, true,
+    false, false, false, false, false, true, false, false, false, false, false, false, false, true,
+    false, false, false,
+];
 
 pub fn maximum_prime_difference_(nums: Vec<i32>) -> i32 {
-    ((0..nums.len()).find(|&i| PRIMES[nums[i] as usize]).unwrap() as i32)
-        .abs_diff((0..nums.len()).rev().find(|&i| PRIMES[nums[i] as usize]).unwrap() as i32) as i32
+    ((0..nums.len()).find(|&i| PRIMES[nums[i] as usize]).unwrap() as i32).abs_diff(
+        (0..nums.len())
+            .rev()
+            .find(|&i| PRIMES[nums[i] as usize])
+            .unwrap() as i32,
+    ) as i32
 }
 
 // <=======================================================================>
 
 pub fn find_latest_time(s: String) -> String {
-    s.chars().enumerate().fold(String::new(), |mut ret, (i, c)| {
-        ret.push(if !c.eq(&'?') { c } else {
-            match i {
-                0 => {
-                    let next = s.chars().nth(1).unwrap();
-                    if next.eq(&'1')
-                    || next.eq(&'?')
-                    || next.eq(&'0')
-                         { '1' }
-                    else { '0' }
-                },
-                1 => {
-                    let prev = s.chars().nth(0).unwrap();
-                    if prev.eq(&'1')
-                    || prev.eq(&'?')
-                         { '1' }
-                    else { '9' }
-                },
-                3 => '5',
-                _ => '9'
-            }
-        }); ret
-    })
+    s.chars()
+        .enumerate()
+        .fold(String::new(), |mut ret, (i, c)| {
+            ret.push(if !c.eq(&'?') {
+                c
+            } else {
+                match i {
+                    0 => {
+                        let next = s.chars().nth(1).unwrap();
+                        if next.eq(&'1') || next.eq(&'?') || next.eq(&'0') {
+                            '1'
+                        } else {
+                            '0'
+                        }
+                    }
+                    1 => {
+                        let prev = s.chars().nth(0).unwrap();
+                        if prev.eq(&'1') || prev.eq(&'?') {
+                            '1'
+                        } else {
+                            '9'
+                        }
+                    }
+                    3 => '5',
+                    _ => '9',
+                }
+            });
+            ret
+        })
 }
 
 // <=======================================================================>
 
 pub fn count_even(num: i32) -> i32 {
-    (2..=num).filter(|i| {
-        let (mut sum, mut x) = (0, *i);
-        while x > 0 {
-            sum += x % 10;
-            x /= 10;
-        }
-        (sum & 1).eq(&0)
-    }).count() as i32
+    (2..=num)
+        .filter(|i| {
+            let (mut sum, mut x) = (0, *i);
+            while x > 0 {
+                sum += x % 10;
+                x /= 10;
+            }
+            (sum & 1).eq(&0)
+        })
+        .count() as i32
 }
 
 // <=======================================================================>
@@ -1114,13 +1262,16 @@ pub fn count_even(num: i32) -> i32 {
 pub fn find_lucky(arr: Vec<i32>) -> i32 {
     (0..=0).fold(-0xFFFFFFF, |_, _| {
         let map = arr.iter().fold([0; 501], |mut map, i| {
-            map[*i as usize] += 1; map
+            map[*i as usize] += 1;
+            map
         });
-        arr.iter().fold(-1, |ret, i|
+        arr.iter().fold(-1, |ret, i| {
             if i.eq(&map[*i as usize]) {
                 ret.max(*i)
-            } else { ret }
-        )
+            } else {
+                ret
+            }
+        })
     })
 }
 
@@ -1128,37 +1279,49 @@ pub fn find_lucky(arr: Vec<i32>) -> i32 {
 
 pub fn pick_gifts(gifts: Vec<i32>, mut k: i32) -> i64 {
     (0..=0).fold(-0xFFFFFFFFFFFFFF, |_, _| {
-        if gifts.len().eq(&1) { return 1 }
-        else if gifts[0].eq(&gifts[gifts.len() - 1]) { return gifts.iter().sum::<i32>() as i64 }
+        if gifts.len().eq(&1) {
+            return 1;
+        } else if gifts[0].eq(&gifts[gifts.len() - 1]) {
+            return gifts.iter().sum::<i32>() as i64;
+        }
 
-        let mut pq = std::collections::BinaryHeap::<i64>::from(gifts.iter().map(|x| *x as i64).collect::<Vec<_>>());
+        let mut pq = std::collections::BinaryHeap::<i64>::from(
+            gifts.iter().map(|x| *x as i64).collect::<Vec<_>>(),
+        );
         while k > 0 {
             let i = pq.pop().unwrap();
             pq.push((i as f64 + 0.5).sqrt() as i64);
             k -= 1;
-        } pq.iter().sum()
+        }
+        pq.iter().sum()
     })
 }
 
 // <=======================================================================>
 
-const MONTHS: &[&str] = &["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTHS: &[&str] = &[
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
 
 pub fn reformat_date(date: String) -> String {
     (0..=0).fold(String::new(), |_, _| {
         let s = date.split_whitespace().collect::<Vec<_>>();
-        format!("{}-{:02}-{:02}", s[2], MONTHS.iter().position(|m_| m_.eq(&s[1])).unwrap() + 1, s[0][..s[0].len() - 2].parse::<u8>().unwrap())
+        format!(
+            "{}-{:02}-{:02}",
+            s[2],
+            MONTHS.iter().position(|m_| m_.eq(&s[1])).unwrap() + 1,
+            s[0][..s[0].len() - 2].parse::<u8>().unwrap()
+        )
     })
 }
 
 // <=======================================================================>
 
 pub fn count_asterisks(s: String) -> i32 {
-    s
-    .split('|')
-    .step_by(2)
-    .map(|g| g.chars().filter(|c| c.eq(&'*')).count())
-    .sum::<usize>() as i32
+    s.split('|')
+        .step_by(2)
+        .map(|g| g.chars().filter(|c| c.eq(&'*')).count())
+        .sum::<usize>() as i32
 }
 
 // <=======================================================================>
@@ -1168,41 +1331,60 @@ pub fn check_x_matrix(grid: Vec<Vec<i32>>) -> bool {
     for y in 0..n {
         for x in 0..n {
             if ((y.eq(&x) || ((y + x).eq(&(n - 1)))) && grid[y][x].eq(&0))
-            || !(y.eq(&x) || ((y + x).eq(&(n - 1)))) && !grid[y][x].eq(&0)
-                { return false }
+                || !(y.eq(&x) || ((y + x).eq(&(n - 1)))) && !grid[y][x].eq(&0)
+            {
+                return false;
+            }
         }
-    } true
+    }
+    true
 }
 
 // <=======================================================================>
 
 pub fn number_of_special_chars(word: String) -> i32 {
-    word.chars().fold([0; 26], |mut map, c| {
-        let i = c.to_ascii_lowercase() as usize - 97; // 'a'
-        if c.is_uppercase() {
-            map[i] |= 0b10;
-        } else {
-            map[i] |= 0b01;
-        } map
-    }).iter().filter(|x| x.eq(&&0b11)).count() as i32
+    word.chars()
+        .fold([0; 26], |mut map, c| {
+            let i = c.to_ascii_lowercase() as usize - 97; // 'a'
+            if c.is_uppercase() {
+                map[i] |= 0b10;
+            } else {
+                map[i] |= 0b01;
+            }
+            map
+        })
+        .iter()
+        .filter(|x| x.eq(&&0b11))
+        .count() as i32
 }
 
 // <=======================================================================>
 
 pub fn find_kth_positive(arr: Vec<i32>, mut k: i32) -> i32 {
-    arr.iter().any(|&x| { if x <= k { k += 1 } x >= k }); k
+    arr.iter().any(|&x| {
+        if x <= k {
+            k += 1
+        }
+        x >= k
+    });
+    k
 }
 
 // <=======================================================================>
 
 pub fn k_length_apart_(nums: Vec<i32>, k: i32) -> bool {
-    for w in nums.iter()
+    for w in nums
+        .iter()
         .enumerate()
         .filter_map(|(i, x)| if x.eq(&1) { Some(i) } else { None })
         .collect::<Vec<_>>()
-        .windows(2) {
-            if w[1] - w[0] <= k as usize { return false }
-        } true
+        .windows(2)
+    {
+        if w[1] - w[0] <= k as usize {
+            return false;
+        }
+    }
+    true
 }
 
 // <=======================================================================>
@@ -1213,10 +1395,15 @@ pub fn k_length_apart(nums: Vec<i32>, k: i32) -> bool {
         .fold((-0xFFFFFFF, true), |(mut l, mut r), (i, x)| {
             if x.eq(&1) {
                 if !l.eq(&-0xFFFFFFF) {
-                    if i as i32 - l - 1 < k { r = false }                   
-                } l = i as i32;
-            } (l, r)
-        }).1
+                    if i as i32 - l - 1 < k {
+                        r = false
+                    }
+                }
+                l = i as i32;
+            }
+            (l, r)
+        })
+        .1
 }
 
 // <=======================================================================>
@@ -1226,25 +1413,36 @@ pub fn maximum_difference(nums: Vec<i32>) -> i32 {
     let mut ret = -1;
     for i in 0..n - 1 {
         for j in i + 1..n {
-            if nums[i] < nums[j] { ret = ret.max(nums[j] - nums[i]); }
+            if nums[i] < nums[j] {
+                ret = ret.max(nums[j] - nums[i]);
+            }
         }
-    } ret
+    }
+    ret
 }
 
 // <=======================================================================>
 
 pub fn most_frequent_even(nums: Vec<i32>) -> i32 {
     let mut evens = nums.iter().filter(|i| *i & 1 == 0).peekable();
-    if evens.peek().is_none() { return -1 }
-    
-    let (map, max) = evens.into_iter().fold((HashMap::new(), -0xFFFFFFF), |(mut map, mut max), i| {
-        let k = map.entry(i).or_insert(0);
-        *k += 1;
-        if *k > max { max = *k; }
-        (map, max)
-    });
+    if evens.peek().is_none() {
+        return -1;
+    }
 
-    **map.iter()
+    let (map, max) =
+        evens
+            .into_iter()
+            .fold((HashMap::new(), -0xFFFFFFF), |(mut map, mut max), i| {
+                let k = map.entry(i).or_insert(0);
+                *k += 1;
+                if *k > max {
+                    max = *k;
+                }
+                (map, max)
+            });
+
+    **map
+        .iter()
         .filter(|(_, v)| **v == max)
         .map(|(k, _)| k)
         .min()
@@ -1257,18 +1455,22 @@ const POSITIONS: &[&[(usize, usize); 4]] = &[
     &[(0, 0), (0, 1), (1, 0), (1, 1)],
     &[(0, 1), (0, 2), (1, 1), (1, 2)],
     &[(1, 0), (1, 1), (2, 0), (2, 1)],
-    &[(1, 1), (1, 2), (2, 1), (2, 2)]
+    &[(1, 1), (1, 2), (2, 1), (2, 2)],
 ];
 
 pub fn can_make_square(grid: Vec<Vec<char>>) -> bool {
     POSITIONS.iter().any(|&p| {
         match p.iter().fold((-2, -2), |(w, b), p| {
-            if grid[p.0][p.1].eq(&'W') { (w + 1, b) }
-            else                       { (w, b + 1) } 
-        })
-        {
-            (a, b) => [a, b]
-        }.iter().any(|x| *x > 0)
+            if grid[p.0][p.1].eq(&'W') {
+                (w + 1, b)
+            } else {
+                (w, b + 1)
+            }
+        }) {
+            (a, b) => [a, b],
+        }
+        .iter()
+        .any(|x| *x > 0)
     })
 }
 
@@ -1281,14 +1483,18 @@ pub fn added_integer(nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
 // <=======================================================================>
 
 pub fn find_length_of_lcis(nums: Vec<i32>) -> i32 {
-    *match nums.windows(2)
-        .fold((1, 1), |(max, curr), w| {
-            if w[1] > w[0] { (max, curr + 1) }
-            else           { (max.max(curr), 1) }
-        })
-    {
-        (a, b) => vec![a, b]
-    }.iter().max().unwrap()
+    *match nums.windows(2).fold((1, 1), |(max, curr), w| {
+        if w[1] > w[0] {
+            (max, curr + 1)
+        } else {
+            (max.max(curr), 1)
+        }
+    }) {
+        (a, b) => vec![a, b],
+    }
+    .iter()
+    .max()
+    .unwrap()
 }
 
 // <=======================================================================>
@@ -1296,52 +1502,85 @@ pub fn find_length_of_lcis(nums: Vec<i32>) -> i32 {
 const VS: &[char; 5] = &['a', 'e', 'i', 'o', 'u'];
 
 pub fn is_valid(word: String) -> bool {
-    (0..=0).fold(0b1000011, |mut ret, _| {
-        if word.len() < 3 { return ret }
-        if word.as_bytes().iter().any(|b| {
-            if VS.contains(&(*b as char).to_ascii_lowercase()) {
-                ret &= !(1 << 1); false
-            } else if b.is_ascii_alphabetic() {
-                ret |=   1 << 2; false
-            } else { !b.is_ascii_alphanumeric() }
-        }) { 0 } else { ret }
-    }).eq(&69)
+    (0..=0)
+        .fold(0b1000011, |mut ret, _| {
+            if word.len() < 3 {
+                return ret;
+            }
+            if word.as_bytes().iter().any(|b| {
+                if VS.contains(&(*b as char).to_ascii_lowercase()) {
+                    ret &= !(1 << 1);
+                    false
+                } else if b.is_ascii_alphabetic() {
+                    ret |= 1 << 2;
+                    false
+                } else {
+                    !b.is_ascii_alphanumeric()
+                }
+            }) {
+                0
+            } else {
+                ret
+            }
+        })
+        .eq(&69)
 }
 
 // <=======================================================================>
 
 macro_rules! a {
-    (.|.$c: expr) => { *$c as usize - 0x61 };
-    (|..|$it: expr) => { $it.into_iter().enumerate() }
+    (.|.$c: expr) => {
+        *$c as usize - 0x61
+    };
+    (|..|$it: expr) => {
+        $it.into_iter().enumerate()
+    };
 }
 
-fn find_permutation_difference(s: String, t: String) -> i32 {
-    (0..=0).fold((0x45, [0x0; 0x1A]), |(_, mut m), _| {
-        a!(|..|t.as_bytes()).for_each(|(i, c)| m[a!(.|.c)] = i);
-        (a!(|..|s.as_bytes()).fold(0x0, |r, (i, c)| r + m[a!(.|.c)].abs_diff(i)), m)
-    }).0 as i32
+pub fn find_permutation_difference(s: String, t: String) -> i32 {
+    (0..=0)
+        .fold((0x45, [0x0; 0x1A]), |(_, mut m), _| {
+            a!(|..| t.as_bytes()).for_each(|(i, c)| m[a!(.|.c)] = i);
+            (
+                a!(|..| s.as_bytes()).fold(0x0, |r, (i, c)| r + m[a!(.|.c)].abs_diff(i)),
+                m,
+            )
+        })
+        .0 as i32
 }
 
 // <=======================================================================>
 
 pub fn is_array_special(nums: Vec<i32>) -> bool {
-    !(0..=0).fold((false, nums.windows(2)), |(r, mut i), _| {
-        if nums.len() <= 1 { return (r, i) }
-        (i.any(|w| w[0] & 1 ^ w[1] & 1 == 0), i)
-    }).0
+    !(0..=0)
+        .fold((false, nums.windows(2)), |(r, mut i), _| {
+            if nums.len() <= 1 {
+                return (r, i);
+            }
+            (i.any(|w| w[0] & 1 ^ w[1] & 1 == 0), i)
+        })
+        .0
 }
 
 // <=======================================================================>
 
 pub fn sum_digit_differences(mut nums: Vec<i32>) -> i64 {
-    nums.iter_mut().fold([[0; 10]; 10], |mut f, x| {
-        (0..10).any(|i| {
-            f[i][*x as usize % 10] += 1;
-            *x /= 10; *x == 0
-        }); f
-    }).iter().fold((0, nums.len()), |(mut r, n), f| {
-        f.iter().for_each(|x| r += (n - x) * x); (r, n)
-    }).0 as i64 >> 1
+    nums.iter_mut()
+        .fold([[0; 10]; 10], |mut f, x| {
+            (0..10).any(|i| {
+                f[i][*x as usize % 10] += 1;
+                *x /= 10;
+                *x == 0
+            });
+            f
+        })
+        .iter()
+        .fold((0, nums.len()), |(mut r, n), f| {
+            f.iter().for_each(|x| r += (n - x) * x);
+            (r, n)
+        })
+        .0 as i64
+        >> 1
 }
 
 // <=======================================================================>
@@ -1353,7 +1592,7 @@ pub fn subset_xor_sum(nums: Vec<i32>) -> i32 {
 // <=======================================================================>
 
 // codewars
-fn is_pangram(s: &str) -> bool {
+pub fn is_pangram(s: &str) -> bool {
     s.chars()
         .filter(|x| x.is_alphabetic())
         .map(|x| x.to_ascii_lowercase())
@@ -1365,25 +1604,28 @@ fn is_pangram(s: &str) -> bool {
 // <=======================================================================>
 
 // codewars
-fn remove_every_other(nums: &[u8]) -> Vec<u8> {
+pub fn remove_every_other(nums: &[u8]) -> Vec<u8> {
     nums.iter()
         .enumerate()
-        .filter_map(|(i, x)| {
-            if i & 1 == 0 {
-                Some(*x)
-            } else { None }
-        }).collect()
+        .filter_map(|(i, x)| if i & 1 == 0 { Some(*x) } else { None })
+        .collect()
 }
 
 // <=======================================================================>
 
 // codewars
-fn order(s: &str) -> String {
+pub fn order(s: &str) -> String {
     let mut cs = s
         .split_whitespace()
         .fold(Vec::with_capacity(100), |mut ret, x| {
-            let dx = x.chars().find(|x| x.is_digit(10)).unwrap().to_digit(10).unwrap();
-            ret.push((dx, x)); ret
+            let dx = x
+                .chars()
+                .find(|x| x.is_digit(10))
+                .unwrap()
+                .to_digit(10)
+                .unwrap();
+            ret.push((dx, x));
+            ret
         });
     cs.sort_unstable_by(|a, b| a.0.cmp(&b.0));
     cs.iter().map(|(_, s)| *s).collect::<Vec<_>>().join(" ")
@@ -1391,16 +1633,16 @@ fn order(s: &str) -> String {
 
 // <=======================================================================>
 
-#[allow(unused)]
 // codewars
-fn cakes(r: &HashMap<&str, u32>, a: &HashMap<&str, u32>) -> u32 {
-    r.into_iter().fold(!0, |r, (k, v)| r.min(a.get(k).unwrap_or(&0) / v))
+pub fn cakes(r: &HashMap<&str, u32>, a: &HashMap<&str, u32>) -> u32 {
+    r.into_iter()
+        .fold(!0, |r, (k, v)| r.min(a.get(k).unwrap_or(&0) / v))
 }
 
 // <=======================================================================>
 
 // codewars
-fn sequence_sum(s: u32, e: u32, step: u32) -> u32 {
+pub fn sequence_sum(s: u32, e: u32, step: u32) -> u32 {
     (s..=e).step_by(step as usize).sum::<u32>()
 }
 
@@ -1421,47 +1663,238 @@ pub fn subtract_product_and_sum(mut n: i32) -> i32 {
 pub fn duplicate_numbers_xor(nums: Vec<i32>) -> i32 {
     nums.iter()
         .fold(HashMap::with_capacity(50), |mut map, x| {
-            *map.entry(x).or_insert(0) += 1; map
-        }).iter()
+            *map.entry(x).or_insert(0) += 1;
+            map
+        })
+        .iter()
         .filter(|(_, x)| x.eq(&&2))
         .fold(0x0, |ret, (x, _)| ret ^ *x)
 }
 
-pub fn occurrences_of_element(nums: Vec::<i32>, queries: Vec::<i32>, x: i32) -> Vec::<i32> {
-    (0..=0).fold(nums.iter()
-                 .enumerate()
-                 .filter(|(_, n)| **n == x)
-                 .map(|(i, _)| i as i32)
-                 .collect::<Vec<_>>(),
-    |occs, _| {
-        queries.iter()
-            .map(|q| {
-                if *q as usize <= occs.len() {
-                    occs[*q as usize - 1]
-                } else { -1 }
-            }).collect::<Vec<_>>()
-    })
-}
+// <=======================================================================>
 
-pub fn query_results(_: i32, qs: Vec::<Vec::<i32>>) -> Vec::<i32> {
-    qs
-    .iter()
-    .fold((HashMap::<i32, i32>::new(), HashMap::<i32, i32>::new(), Vec::new(), 0),
-    |(mut bcs, mut ccs, mut ret, mut dcc), q| {
-        if let Some(c) = ccs.get_mut(bcs.get(&q[0]).unwrap_or(&-0xAAA)) {
-            *c -= 1;
-            if *c == 0 { dcc -= 1; }
-        }
-        bcs.insert(q[0], q[1]);
-        let c = ccs.entry(q[1]).or_insert(0);
-        *c += 1;
-        if *c == 1 { dcc += 1; }
-        ret.push(dcc);
-        (bcs, ccs, ret, dcc)
-    }).2
+pub fn occurrences_of_element(nums: Vec<i32>, queries: Vec<i32>, x: i32) -> Vec<i32> {
+    (0..=0).fold(
+        nums.iter()
+            .enumerate()
+            .filter(|(_, n)| **n == x)
+            .map(|(i, _)| i as i32)
+            .collect::<Vec<_>>(),
+        |occs, _| {
+            queries
+                .iter()
+                .map(|q| {
+                    if *q as usize <= occs.len() {
+                        occs[*q as usize - 1]
+                    } else {
+                        -1
+                    }
+                })
+                .collect::<Vec<_>>()
+        },
+    )
 }
 
 // <=======================================================================>
+
+pub fn query_results(_: i32, qs: Vec<Vec<i32>>) -> Vec<i32> {
+    qs.iter()
+        .fold(
+            (
+                HashMap::<i32, i32>::new(),
+                HashMap::<i32, i32>::new(),
+                Vec::new(),
+                0,
+            ),
+            |(mut bcs, mut ccs, mut ret, mut dcc), q| {
+                if let Some(c) = ccs.get_mut(bcs.get(&q[0]).unwrap_or(&-0xAAA)) {
+                    *c -= 1;
+                    if *c == 0 {
+                        dcc -= 1;
+                    }
+                }
+                bcs.insert(q[0], q[1]);
+                let c = ccs.entry(q[1]).or_insert(0);
+                *c += 1;
+                if *c == 1 {
+                    dcc += 1;
+                }
+                ret.push(dcc);
+                (bcs, ccs, ret, dcc)
+            },
+        )
+        .2
+}
+
+// <=======================================================================>
+
+pub fn compressed_string(word: String) -> String {
+    (0..=0).fold(
+        "upvote that and your mom will live forever".to_owned(),
+        |_, _| {
+            let bytes = word.as_bytes();
+            let (mut ret, j) = bytes.into_iter().enumerate().skip(1).fold(
+                (Vec::new(), 0),
+                |(mut ret, j), (i, xi)| {
+                    if *xi != bytes[j] || i > j + 8 {
+                        ret.extend([48 + (i - j) as u8, bytes[j]]);
+                        (ret, i)
+                    } else {
+                        (ret, j)
+                    }
+                },
+            );
+            ret.extend([48 + (bytes.len() - j) as u8, bytes[j]]);
+            unsafe { String::from_utf8_unchecked(ret) }
+        },
+    )
+}
+
+// <=======================================================================>
+
+use std::ops::Add;
+
+pub fn find_indices(nums: Vec<i32>, id: i32, vd: i32) -> Vec<i32> {
+    if id.add(vd).eq(&0) {
+        return vec![0, 0];
+    }
+    let n = nums.len();
+    for i in 0..n {
+        for j in 0..n {
+            if i.abs_diff(j) >= id as _ && nums[i].abs_diff(nums[j]) >= vd as _ {
+                return vec![i as i32, j as i32];
+            }
+        }
+    }
+    vec![-1, -1]
+}
+
+// <=======================================================================>
+
+pub fn replace_words_(mut d: Vec<String>, s: String) -> String {
+    s.split_whitespace()
+        .fold((Vec::new(), d.sort_unstable()), |(mut ret, _), w| {
+            ret.push(
+                d.iter()
+                    .find(|r| w.starts_with(*r))
+                    .map(String::as_str)
+                    .unwrap_or(w),
+            );
+            (ret, ())
+        })
+        .0
+        .join(" ")
+}
+
+pub fn replace_words(mut d: Vec<String>, s: String) -> String {
+    s.split_whitespace()
+        .fold(
+            (
+                {
+                    d.sort_unstable();
+                    d.dedup_by(|r, p| r.starts_with(p.as_str()))
+                },
+                Vec::with_capacity(s.len()),
+            ),
+            |(_, mut ret), w| {
+                ret.push(match d.partition_point(|d| d.as_str() < w) {
+                    i @ (1..) if w.starts_with(&d[i - 1]) => d[i - 1].as_str(),
+                    _ => w,
+                });
+                ((), ret)
+            },
+        )
+        .1
+        .join(" ")
+}
+
+// <=======================================================================>
+
+pub fn clear_digits(s: String) -> String {
+    s.chars().fold(String::with_capacity(s.len()), |mut s, c| {
+        if c.is_ascii_digit() {
+            s.pop();
+        } else {
+            s.push(c);
+        }
+        s
+    })
+}
+
+// <=======================================================================>
+
+pub fn find_winning_player(s: Vec<i32>, k: i32) -> i32 {
+    (1..s.len())
+        .try_fold((0, 0), |(c, m), i| {
+            if c >= k {
+                Err((c, m))
+            } else if s[i] < s[m] {
+                Ok((c + 1, m))
+            } else {
+                Ok((1, i))
+            }
+        })
+        .unwrap_or_else(|(c, m)| (c, m))
+        .1 as i32
+}
+
+// <=======================================================================>
+
+pub fn count_complete_day_pairs(hs: Vec<i32>) -> i32 {
+    let mut ret = 0;
+    let n = hs.len();
+    for i in 0..n - 1 {
+        for j in i..n {
+            if i < j && (hs[i] + hs[j]) % 24 == 0 {
+                ret += 1;
+            }
+        }
+    }
+    ret
+}
+
+// <=======================================================================>
+
+pub fn twos_difference(v: &[u32]) -> Vec<(u32, u32)> {
+    use std::collections::HashSet;
+
+    let set = v.iter().collect::<HashSet<_>>();
+
+    let mut ret = v
+        .iter()
+        .filter_map(|i| {
+            if set.contains(&(i + 2)) {
+                Some((*i, i + 2))
+            } else {
+                None
+            }
+        }).collect::<Vec<_>>();
+
+    ret.sort_unstable();
+    ret
+}
+
+pub fn get_encrypted_string(s: String, k: i32) -> String {
+    let bytes = s.as_bytes();
+    s.char_indices().map(|(i, _)| {
+        bytes[(i + k as usize) % bytes.len()] as char
+    }).collect()
+}
+
+pub fn final_position_of_snake(n: i32, commands: Vec::<String>) -> i32 {
+    let mut dir = (0, 0);
+    commands.into_iter().for_each(|cmd| {
+        match cmd.as_str() {
+            "UP"    => dir.0 -= 1,
+            "DOWN"  => dir.0 += 1,
+            "LEFT"  => dir.1 -= 1,
+            "RIGHT" => dir.1 += 1,
+            _       => unreachable!()
+        };
+    });
+
+    (dir.0 * n) + dir.1
+}
 
 #[allow(unused)]
 macro_rules! tovsstring {
@@ -1470,7 +1903,9 @@ macro_rules! tovsstring {
 
 #[allow(unused)]
 macro_rules! own {
-    ($str: expr) => { $str.to_owned() }
+    ($str: expr) => {
+        $str.to_owned()
+    };
 }
 
 #[allow(unused)]
@@ -1484,20 +1919,28 @@ macro_rules! map {
 }
 
 fn main() {
-    dbg!(subtract_product_and_sum(234));
-    dbg!(sequence_sum(2, 6, 2));
-    dbg!(order("is2 Thi1s T4est 3a"));
-    dbg!(remove_every_other(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
-    dbg!(is_pangram("The quick, brown fox jumps over the lazy dog!"));
-    dbg!(sum_digit_differences(vec![13,23,12]));
-    dbg!(is_array_special(vec![2,1,4]));
-    dbg!(find_permutation_difference(own!("abc"), own!("bac")));
-    dbg!(is_valid(own!("AhI")));
-    dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
-    dbg!(can_make_square(vec![vec!['B','W','B'], vec!['W','B','W'], vec!['B','W','B']]));
-    dbg!(most_frequent_even(vec![0,1,2,2,4,4,1]));
-    dbg!(maximum_difference(vec![1,5,2,10]));
-    dbg!(k_length_apart(vec![1,0,0,0,1,0,0,1], 2));
-    dbg!(find_kth_positive(vec![2, 3, 4, 7, 11], 5));
-    dbg!(number_of_special_chars(own!("aaAbcBC")));
+    dbg!(final_position_of_snake(2, tovsstring!("RIGHT","DOWN")));
+    dbg!(get_encrypted_string("dart".to_owned(), 3));
+    dbg!(count_complete_day_pairs(vec![72, 48, 24, 3]));
+    dbg!(find_winning_player(vec![4, 2, 6, 3, 9], 2));
+    // dbg!(clear_digits(own!("cb34")));
+    // dbg!(replace_words(vec![own!("cat"), own!("bat"), own!("rat")], own!("the cattle was rattled by the battery")));
+    // dbg!(find_indices(vec![5,1,4,1], 2, 4));
+    // dbg!(compressed_string("aaaaaaaaaaaaaabb".to_owned()));
+    // dbg!(subtract_product_and_sum(234));
+    // dbg!(sequence_sum(2, 6, 2));
+    // dbg!(order("is2 Thi1s T4est 3a"));
+    // dbg!(remove_every_other(&[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
+    // dbg!(is_pangram("The quick, brown fox jumps over the lazy dog!"));
+    // dbg!(sum_digit_differences(vec![13,23,12]));
+    // dbg!(is_array_special(vec![2,1,4]));
+    // dbg!(find_permutation_difference(own!("abc"), own!("bac")));
+    // dbg!(is_valid(own!("AhI")));
+    // dbg!(find_length_of_lcis(vec![2,2,2,2,2]));
+    // dbg!(can_make_square(vec![vec!['B','W','B'], vec!['W','B','W'], vec!['B','W','B']]));
+    // dbg!(most_frequent_even(vec![0,1,2,2,4,4,1]));
+    // dbg!(maximum_difference(vec![1,5,2,10]));
+    // dbg!(k_length_apart(vec![1,0,0,0,1,0,0,1], 2));
+    // dbg!(find_kth_positive(vec![2, 3, 4, 7, 11], 5));
+    // dbg!(number_of_special_chars(own!("aaAbcBC")));
 }
