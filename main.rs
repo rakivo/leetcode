@@ -1896,6 +1896,10 @@ pub fn final_position_of_snake(n: i32, commands: Vec::<String>) -> i32 {
     (dir.0 * n) + dir.1
 }
 
+pub fn find_different(nums: &Vec::<i32>, common: i32) -> i32 {
+    nums.iter().sum::<i32>() - (nums.len() as i32 * common) + common
+}
+
 #[allow(unused)]
 macro_rules! tovsstring {
     ($($str: expr), *) => { vec![$($str.to_owned()), *] }
@@ -1918,7 +1922,92 @@ macro_rules! map {
     }};
 }
 
+pub fn is_balanced(s: String) -> bool {
+    let (e, o) = s.as_bytes().iter().enumerate().fold((0, 0), |(even, odd), (i, b)| {
+        if i & 1 == 0 {
+            (even + b - b'0', odd)
+        } else {
+            (even, odd + b - b'0')
+        }
+    }); e == o
+}
+
+pub fn smallest_number(n: i32, t: i32) -> i32 {
+    fn dig_prod(mut x: i32) -> i32 {
+        let mut prod = 1;
+        while x != 0 {
+            prod *= x % 10;
+            x /= 10;
+        } prod
+    }
+
+    let mut curr = n;
+    loop {
+        if dig_prod(curr) % t == 0 {
+            return curr
+        } curr += 1;
+    }
+}
+
+pub fn find_subtree_sizes(parents: Vec::<i32>, s: String) -> Vec::<i32> {
+    fn dfs(
+        mut parent: i32,
+        node: i32,
+
+        ret: &mut Vec::<i32>,
+        letter_stack: &mut Vec::<Vec<i32>>,
+        children: &Vec::<Vec::<i32>>,
+
+        s: &[u8]
+    ) {
+        let unode = node as usize;
+        let ch = (s[unode] - const { b'a' }) as usize;
+        if let Some(&child) = letter_stack[ch].last() {
+            parent = child
+        }
+        letter_stack[ch].push(node);
+        children[unode].iter().for_each(|&next| {
+            dfs(node, next, ret, letter_stack, children, s)
+        });
+        letter_stack[ch].pop();
+        ret[unode] += 1;
+        if parent != -1 {
+            ret[parent as usize] += ret[unode]
+        }
+    }
+
+    let n = parents.len();
+    let mut children = vec![Vec::new(); n];
+    (1..n).for_each(|i| {
+        children[parents[i] as usize].push(i as i32)
+    });
+
+    let mut ret = vec![0; n];
+    dfs(-1, 0, &mut ret, &mut vec![Vec::new(); 26], &children, s.as_bytes());
+    ret
+}
+
+
+pub fn possible_string_count(word: String) -> i32 {
+    let mut bytes = word.as_bytes().to_vec();
+    bytes.dedup();
+    (word.len() - bytes.len()) as i32 + 1
+
+    // use std::collections::HashMap;
+
+    // word.as_bytes().into_iter().fold(HashMap::with_capacity(26), |mut map, b| {
+    //     map.entry(b).and_modify(|e| *e += 1).or_insert(0); map
+    // }).values().sum::<i32>() + 1
+}
+
 fn main() {
+    dbg!(possible_string_count("abbcccc".to_owned()));
+    dbg!(possible_string_count("abcd".to_owned()));
+    dbg!(possible_string_count("aaaa".to_owned()));
+    dbg!(find_subtree_sizes(vec![-1,0,0,1,1,1], "abaabc".to_owned()));
+    dbg!(smallest_number(15, 3));
+    dbg!(is_balanced("24123".to_owned()));
+    dbg!(find_different(&vec![5, 5, 5, 7, 5, 5], 5));
     dbg!(final_position_of_snake(2, tovsstring!("RIGHT","DOWN")));
     dbg!(get_encrypted_string("dart".to_owned(), 3));
     dbg!(count_complete_day_pairs(vec![72, 48, 24, 3]));
