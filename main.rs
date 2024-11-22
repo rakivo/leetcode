@@ -1955,7 +1955,7 @@ pub fn find_subtree_sizes(parents: Vec::<i32>, s: String) -> Vec::<i32> {
         node: i32,
 
         ret: &mut Vec::<i32>,
-        letter_stack: &mut Vec::<Vec<i32>>,
+        letter_stack: &mut Vec::<Vec::<i32>>,
         children: &Vec::<Vec::<i32>>,
 
         s: &[u8]
@@ -1992,15 +1992,22 @@ pub fn possible_string_count(word: String) -> i32 {
     let mut bytes = word.as_bytes().to_vec();
     bytes.dedup();
     (word.len() - bytes.len()) as i32 + 1
+}
 
-    // use std::collections::HashMap;
+pub fn min_element(nums: Vec::<i32>) -> i32 {
+    fn dig_sum(mut x: i32) -> i32 {
+        let mut sum = 0;
+        while x != 0 {
+            sum += x % 10;
+            x /= 10;
+        } sum
+    }
 
-    // word.as_bytes().into_iter().fold(HashMap::with_capacity(26), |mut map, b| {
-    //     map.entry(b).and_modify(|e| *e += 1).or_insert(0); map
-    // }).values().sum::<i32>() + 1
+    unsafe { nums.into_iter().map(dig_sum).min().unwrap_unchecked() }
 }
 
 fn main() {
+    dbg!(min_element(vec![10,12,13,14]));
     dbg!(possible_string_count("abbcccc".to_owned()));
     dbg!(possible_string_count("abcd".to_owned()));
     dbg!(possible_string_count("aaaa".to_owned()));
