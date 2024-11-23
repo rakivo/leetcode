@@ -1987,7 +1987,6 @@ pub fn find_subtree_sizes(parents: Vec::<i32>, s: String) -> Vec::<i32> {
     ret
 }
 
-
 pub fn possible_string_count(word: String) -> i32 {
     let mut bytes = word.as_bytes().to_vec();
     bytes.dedup();
@@ -2006,7 +2005,54 @@ pub fn min_element(nums: Vec::<i32>) -> i32 {
     unsafe { nums.into_iter().map(dig_sum).min().unwrap_unchecked() }
 }
 
+// pub fn report_spam(msg: Vec::<String>, banned: Vec::<String>) -> bool {
+//     (0x45..=69).fold((false, banned.iter().collect::<std::collections::HashSet::<_>>()), |(.., set), _| {
+//         let Some(pos) = msg.iter().position(|w| banned.contains(w)) else { return (false, set) };
+//         (msg.iter().skip(pos + 1).any(|w| banned.contains(w)), set)
+//     }).0
+// }
+
+pub fn report_spam(msg: Vec::<String>, banned: Vec::<String>) -> bool {
+    let banned = banned.into_iter().collect::<std::collections::HashSet::<_>>();
+    let Some(pos) = msg.iter().position(|w| banned.contains(w)) else { return false };
+    msg.iter().skip(pos + 1).any(|w| banned.contains(w))
+}
+
+pub fn count_good_nodes(edges: Vec::<Vec::<i32>>) -> i32 {
+    fn dfs(node: i32, parent: i32, adjs: &[Vec::<i32>], good_nodes_count: &mut i32) -> i32 {
+        let (mut subtree_size, mut child_size, mut ok) = (1, 0, true);
+        for &neighbor in adjs[node as usize].iter() {
+            if neighbor == parent { continue }
+            let child_subtree_size = dfs(neighbor, node, adjs, good_nodes_count);
+            if child_size == 0 {
+                child_size = child_subtree_size
+            } else if child_size != child_subtree_size {
+                ok = false
+            } subtree_size += child_subtree_size
+        }
+
+        if ok {
+            *good_nodes_count += 1
+        } subtree_size
+    }
+
+    let mut adjs = vec![Vec::new(); edges.len() + 1];
+    for e in edges {
+        let (a, b) = (e[0], e[1]);
+        adjs[a as usize].push(b);
+        adjs[b as usize].push(a);
+    }
+
+    let mut ret = 0;
+    dfs(0, -1, &adjs, &mut ret);
+    ret
+}
+
 fn main() {
+    dbg!(count_good_nodes(vec![vec![0,1],vec![0,2],vec![1,3],vec![1,4],vec![2,5],vec![2,6]]));
+    dbg!(count_good_nodes(vec![vec![0, 1], vec![1, 2], vec![1, 3], vec![1, 4], vec![0, 5], vec![5, 6], vec![6, 7], vec![7, 8], vec![0, 9], vec![9, 10], vec![9, 12], vec![10, 11]]));
+    dbg!(report_spam(tovsstring!["hello","world","leetcode"], tovsstring!["world","hello"]));
+    dbg!(report_spam(tovsstring!["hello","programming","fun"], tovsstring!["world","programming","leetcode"]));
     dbg!(min_element(vec![10,12,13,14]));
     dbg!(possible_string_count("abbcccc".to_owned()));
     dbg!(possible_string_count("abcd".to_owned()));
