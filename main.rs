@@ -2048,7 +2048,177 @@ pub fn count_good_nodes(edges: Vec::<Vec::<i32>>) -> i32 {
     ret
 }
 
+pub fn path_sum(root: Option<Rc<RefCell<TreeNode>>>, mut target_sum: i32) -> Vec<Vec<i32>> {
+    if let Some(n) = root {
+        let mut n = n.borrow_mut();
+        if n.left.is_none() && n.right.is_none() && n.val == target_sum {
+            return vec![vec![n.val]]
+        }
+        target_sum -= n.val;
+        path_sum(n.left.take(), target_sum)
+            .into_iter()
+            .chain(path_sum(n.right.take(), target_sum).into_iter())
+            .map(|mut v| { v.insert(0, n.val); v })
+            .collect::<_>()
+    } else {
+        Vec::new()
+    }
+}
+
+type TreeLink = Rc<RefCell<TreeNode>>;
+
+pub fn lowest_common_ancestor(root: Option<TreeLink>, p: Option<TreeLink>, q: Option<TreeLink>) -> Option<TreeLink> {
+    if root == p || root == q { return root }
+
+    let root = root?;
+    let broot = root.borrow();
+    let l = lowest_common_ancestor(broot.left.clone(), p.clone(), q.clone());
+    let r = lowest_common_ancestor(broot.right.clone(), p.clone(), q.clone());
+
+    if l.is_some() && r.is_some() {
+        drop(broot); Some(root)
+    } else {
+        l.or(r)
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum NestedInteger {
+    Int(i32),
+    List(Vec<NestedInteger>)
+}
+
+use std::mem::ManuallyDrop;
+
+struct NestedIterator {
+    ptr: *mut i32,
+    end: *const i32,
+    _marker: ManuallyDrop::<Box::<[i32]>>
+}
+
+impl NestedIterator {
+    fn new(list: Vec<NestedInteger>) -> Self {
+        fn flatten(list: Vec<NestedInteger>, ret: &mut Vec::<i32>) {
+            list.into_iter().for_each(|n| match n {
+                NestedInteger::Int(int) => ret.push(int),
+                NestedInteger::List(list) => flatten(list, ret)
+            })
+        }
+
+        let mut flat = Vec::with_capacity(list.len());
+        flatten(list, &mut flat);
+
+        let len = flat.len();
+        let mut buf = flat.into_boxed_slice();
+
+        Self {
+            ptr: buf.as_mut_ptr(),
+            end: unsafe { buf.as_mut_ptr().offset(len as _) as *const _ },
+            _marker: ManuallyDrop::new(buf)
+        }
+    }
+    
+    fn next(&mut self) -> i32 {
+        unsafe {
+            let ret = *self.ptr;
+            self.ptr = self.ptr.offset(1);
+            ret
+        }
+    }
+    
+    fn has_next(&self) -> bool {
+        self.ptr as *const _ != self.end
+    }
+}
+
+pub fn width_of_binary_tree(root: Option::<Rc::<RefCell::<TreeNode>>>) -> i32 {
+    use std::collections::VecDeque;
+
+    let Some(root) = root else { return 0 };
+
+    let mut ret = 0;
+    let mut queue = VecDeque::from(vec![(root, 0)]);
+
+    while !queue.is_empty() {
+        let mut level_end = 0;
+        let mut level_start = 0;
+        let level_size = queue.len();
+
+        for i in 0..level_size {
+            let (node, idx) = unsafe { queue.pop_front().unwrap_unchecked() };
+            let bnode = node.borrow();
+
+            if let Some(ref l) = bnode.left {
+                queue.push_back((l.clone(), 2 * idx));
+            }
+
+            if let Some(ref r) = bnode.right {
+                queue.push_back((r.clone(), 2 * idx + 1));
+            }
+
+            if i == 0 {
+                level_start = idx;
+            }
+
+            if i == level_size - 1 {
+                level_end = idx;
+            }
+        }
+
+        ret = ret.max(level_end - level_start + 1);
+    }
+
+    ret as _
+}
+
+// this one is so clever, the source: https://leetcode.com/problems/find-duplicate-subtrees/solutions/3240513/faster-than-100-less-space-than-100-4ms-2-9mb
+pub fn find_duplicate_subtrees(root: Option::<TreeLink>) -> Vec::<Option::<TreeLink>> {
+    fn dfs(node: Option::<TreeLink>, map: &mut HashMap::<(i32, i32), Vec::<Option::<TreeLink>>>, duplicates: &mut Vec::<Option::<TreeLink>>) -> i32 {
+        match node.to_owned() {
+            Some(node_ref) => {
+                let bnode = node_ref.borrow();
+                let left = dfs(bnode.left.to_owned(), map, duplicates);
+                let right = dfs(bnode.right.to_owned(), map, duplicates);
+                let key = (left, right);
+
+                map.entry(key).and_modify(|list| {
+                    if list.contains(&node) && !duplicates.contains(&node) {
+                        duplicates.push(node);
+                    } else {
+                        list.push(node);
+                    }
+                }).or_insert(vec![Some(node_ref.to_owned())]);
+
+                left + right + 1
+            },
+            None => 0
+        }
+    }
+
+    let mut dups = Vec::new();
+    dfs(root, &mut HashMap::new(), &mut dups);
+    dups
+}
+
 fn main() {
+    let nested_list = vec![
+        NestedInteger::List(vec![
+            NestedInteger::Int(1),
+            NestedInteger::Int(1),
+        ]),
+        NestedInteger::Int(2),
+        NestedInteger::List(vec![
+            NestedInteger::Int(1),
+            NestedInteger::Int(1),
+        ]),
+    ];
+
+    let mut i = NestedIterator::new(nested_list);
+
+    while i.has_next() {
+        println!("{}", i.next());
+    }
+
     dbg!(count_good_nodes(vec![vec![0,1],vec![0,2],vec![1,3],vec![1,4],vec![2,5],vec![2,6]]));
     dbg!(count_good_nodes(vec![vec![0, 1], vec![1, 2], vec![1, 3], vec![1, 4], vec![0, 5], vec![5, 6], vec![6, 7], vec![7, 8], vec![0, 9], vec![9, 10], vec![9, 12], vec![10, 11]]));
     dbg!(report_spam(tovsstring!["hello","world","leetcode"], tovsstring!["world","hello"]));
